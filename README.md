@@ -28,11 +28,10 @@ flowchart TD
     A --> C["2. Unit Tests Backend"]
     A --> D["3. API & Security Testing"]
     A --> E["4. UI Automation & E2E"]
-    A --> F["5. Defect Management"]
 
     B --> B1["TEST_PLAN.md (Master Test Plan)"]
-    B --> B2["TESTCASES_DALAT_TRAVEL.md (36 TCs Matrix)"]
-    B --> B3["testcase hướng dẫn .md (QA Guide)"]
+    B --> B2["TESTCASES_DALAT_TRAVEL.md (Full 36 TCs Matrix)"]
+    B --> B3["TEST_CASES.md (Detailed Test Suite)"]
 
     C --> C1["JUnit 5 + Mockito (AuthServiceTest)"]
     C --> C2["HotelBookingServiceTest (6/6 Passed)"]
@@ -41,15 +40,11 @@ flowchart TD
     D --> D2["Google OAuth2 JWT Verification"]
 
     E --> E1["Playwright/Selenium (14 HD Screenshots)"]
-
-    F --> F1["BUG_REPORT.md (MantisBT/Jira Log)"]
 ```
 
 ### 📄 1. Bộ Tài Liệu Quy Chuẩn Kiểm Thử (QA Documentation)
 - 📘 **Master Test Plan ([TEST_PLAN.md](TEST_PLAN.md)):** Kế hoạch kiểm thử tổng thể quy định phạm vi, môi trường, tiêu chí Entry/Exit Criteria và chiến lược Black-box / White-box / Gray-box.
-- 📋 **Ma Trận 36 Test Cases Chi Tiết ([TESTCASES_DALAT_TRAVEL.md](TESTCASES_DALAT_TRAVEL.md)):** Thiết kế ma trận 36 kịch bản kiểm thử áp dụng kỹ thuật Phân vùng tương đương (Equivalence Partitioning) và Phân tích giá trị biên (Boundary Value Analysis).
-- 📗 **Kịch Bản Test Hướng Dẫn Chi Tiết ([testcase hướng dẫn .md](testcase%20h%C6%B0%E1%BB%9Bng%20d%E1%BA%ABn%20.md)):** Tài liệu hướng dẫn kịch bản từng phân hệ.
-- 🐞 **Nhật Ký Báo Cáo & Theo Dõi Lỗi ([BUG_REPORT.md](BUG_REPORT.md)):** Quy trình ghi nhận và quản lý lỗi chuẩn MantisBT / Jira Defect Log (`BUG-001`, `BUG-002`, `BUG-003`).
+- 📋 **Ma Trận Test Cases Chi Tiết ([TESTCASES_DALAT_TRAVEL.md](TESTCASES_DALAT_TRAVEL.md) & [TEST_CASES.md](TEST_CASES.md)):** Thiết kế ma trận 36+ kịch bản kiểm thử áp dụng kỹ thuật Phân vùng tương đương (Equivalence Partitioning) và Phân tích giá trị biên (Boundary Value Analysis).
 
 ### 💻 2. Kiểm Thử Đơn Vị Backend - Hộp Trắng (White-box Unit Tests)
 - **Công cụ:** JUnit 5, Mockito (`@Mock`, `@InjectMocks`, `when().thenReturn()`).
@@ -121,65 +116,49 @@ flowchart TD
 
 ---
 
-## 🗄️ THIẾT KẾ CƠ SỞ DỮ LIỆU (DATABASE SCHEMA / ERD)
+## 🗄️ CHI TIẾT CƠ SỞ DỮ LIỆU `dalattravel_db` (DATABASE SCHEMA - 23 TABLES)
+
+Cơ sở dữ liệu MySQL `dalattravel_db` bao gồm **23 bảng dữ liệu chuẩn hóa 3NF** quản lý toàn bộ hệ sinh thái du lịch, đặt phòng và ghép xe:
 
 ```mermaid
 erDiagram
-    USERS {
-        string id PK
-        string username
-        string email
-        string password
-        string fullName
-        string phoneNumber
-        string role
-    }
-
-    HOTELS {
-        int id PK
-        string name
-        string address
-        string phone
-        decimal pricePerNight
-        string imageUrl
-    }
-
-    HOTEL_BOOKINGS {
-        bigint id PK
-        string bookingCode
-        string customerName
-        string phoneNumber
-        string email
-        int hotelId FK
-        date checkInDate
-        date checkOutDate
-        int numberOfGuests
-        decimal totalPrice
-        string status
-        timestamp createdAt
-    }
-
-    TOURIST_PLACES {
-        string id PK
-        string name
-        string description
-        decimal ticketPrice
-        int rating
-        string imageUrl
-    }
-
-    RESTAURANTS {
-        int id PK
-        string name
-        string address
-        string phone
-        decimal averagePricePerPerson
-        string imageUrl
-    }
-
-    HOTELS ||--o{ HOTEL_BOOKINGS : "has bookings"
-    USERS ||--o{ HOTEL_BOOKINGS : "makes bookings"
+    users ||--o{ hotel_bookings : "đặt phòng"
+    users ||--o{ favorites : "lưu yêu thích"
+    users ||--o{ reviews : "bình luận"
+    hotels ||--o{ hotel_bookings : "có đơn đặt"
+    tourist_places }|--|| categories : "thuộc danh mục"
+    tourist_places }|--|| regions : "thuộc khu vực"
+    vehicles ||--o{ completed_trips : "thực hiện chuyến xe"
+    completed_trips ||--o{ completed_trip_passengers : "chứa hành khách"
 ```
+
+### 📋 Bảng Kê 23 Bảng Cơ Sở Dữ Liệu & Chú Thích Chi Tiết:
+
+| STT | Tên Bảng (Table Name) | Chức Năng & Mục Đích Sử Dụng Dữ Liệu |
+| :---: | :--- | :--- |
+| 1 | **`users`** | Quản lý thông tin tài khoản người dùng, băm mật khẩu SHA-256, thông tin Google OAuth2 và phân quyền hệ thống (`ADMIN`, `USER`). |
+| 2 | **`tourist_places`** | Lưu trữ danh sách 50+ địa điểm du lịch Đà Lạt (Tên, mô tả, giá vé, số sao đánh giá, tọa độ Lat/Lng và đường dẫn ảnh HD). |
+| 3 | **`attractions`** | Chi tiết các điểm tham quan nhỏ, hoạt động check-in chi tiết bên trong từng danh thắng lớn. |
+| 4 | **`hotels`** | Danh sách Khách sạn, Homestay & Resort cao cấp (Địa chỉ, số điện thoại, giá phòng/đêm, tiện ích và hình ảnh). |
+| 5 | **`hotel_bookings`** | Quản lý đơn đặt phòng khách sạn: Lưu mã `DLBK-XXXX`, ngày Check-in/Check-out, số khách, tổng tiền và trạng thái duyệt (`PENDING`, `CONFIRMED`, `CANCELLED`). |
+| 6 | **`restaurants`** | Danh sách nhà hàng & quán ăn đặc sản Đà Lạt (Địa chỉ, khoảng giá trung bình, số điện thoại và loại hình ẩm thực). |
+| 7 | **`categories`** | Danh mục phân loại địa điểm (Tham quan, Check-in, Ẩm thực, Văn hóa, Thiên nhiên, Giải trí). |
+| 8 | **`regions`** | Phân loại địa lý khu vực hành chính tại Đà Lạt (Trung tâm, Phường 1, Trại Mát, Hồ Tuyền Lâm, Cầu Đất...). |
+| 9 | **`completed_trips`** | Lưu trữ thông tin lịch sử các chuyến ghép xe đi chung đã hoàn thành (Lộ trình, tài xế, thời gian đến). |
+| 10 | **`completed_trip_passengers`** | Danh sách hành khách từng đi trên các chuyến ghép xe đã hoàn thành. |
+| 11 | **`pending_carpool_requests`** | Quản lý các yêu cầu đăng ký ghép xe đi chung đang chờ tài xế xác nhận hoặc chờ đủ số lượng người. |
+| 12 | **`passengers`** | Thông tin chi tiết hành khách đăng ký tham gia dịch vụ ghép xe. |
+| 13 | **`passenger_groups`** | Nhóm hành khách đăng ký cùng chuyến ghép xe đi theo nhóm/gia đình. |
+| 14 | **`vehicles`** | Danh sách phương tiện di chuyển được đăng ký chạy dịch vụ ghép xe (Loại xe 4 chỗ, 7 chỗ, biển số, màu xe). |
+| 15 | **`vehicle_pricing_configs`** | Cấu hình bảng giá cước ghép xe theo từng loại phương tiện và số kilômét di chuyển. |
+| 16 | **`transport_options`** | Lưu các lựa chọn phương tiện di chuyển du lịch (Thuê xe máy, Ô tô tự lái, Xe đưa đón sân bay). |
+| 17 | **`transport_price_histories`** | Ghi nhận lịch sử biến động giá cước thuê phương tiện theo mùa lễ hội/cao điểm. |
+| 18 | **`festivals`** | Thông tin các sự kiện văn hóa, festival hoa Đà Lạt và lễ hội âm nhạc theo từng thời điểm trong năm. |
+| 19 | **`blog_posts`** | Lưu trữ các bài viết cẩm nang du lịch, kinh nghiệm phượt Đà Lạt và hướng dẫn chọn trang phục. |
+| 20 | **`favorites`** | Danh sách địa điểm du lịch & khách sạn yêu thích do người dùng thả tim / lưu lại. |
+| 21 | **`reviews`** | Quản lý đánh giá số sao (1-5★) và lời bình luận trải nghiệm của du khách tại các địa điểm / khách sạn. |
+| 22 | **`contacts`** | Lưu trữ tin nhắn phản hồi, góp ý và yêu cầu hỗ trợ từ du khách gửi đến Ban quản trị. |
+| 23 | **`legacy_locations`** | Lưu trữ tọa độ mốc dữ liệu cũ và địa danh lịch sử Đà Lạt hỗ trợ thuật toán bản đồ. |
 
 ---
 
@@ -189,7 +168,7 @@ erDiagram
 - **Security & Auth**: Google Identity Services (OAuth2 JWT), SHA-256 Password Hashing, `AuthInterceptor` (Session-based RBAC protection).
 - **Algorithms & APIs**: TSP (Traveling Salesman Problem) Greedy Route Optimization, OpenStreetMap OSRM REST Routing API.
 - **Frontend & UI**: HTML5, Vanilla CSS, Bootstrap 5.3, FontAwesome 6, LeafletJS Interactive Maps.
-- **Database**: MySQL 8.0 với InnoDB, UTF-8 Encoding.
+- **Database**: MySQL 8.0 với InnoDB, UTF-8 Encoding (**23 Tables**).
 - **Testing Suite**: JUnit 5, Mockito, Maven Test, Playwright / Browser E2E Automation.
 
 ---
@@ -243,8 +222,8 @@ DaLattravel/
 ├── docs/screenshots/               # Thư viện 14 ảnh chụp kiểm thử tính năng
 ├── src/main/java/com/example/dalattravel/
 │   ├── config/                     # WebMvcConfig, AuthInterceptor, DataSeeder
-│   ├── controller/                 # HomeController, TripPlannerController, HotelController, AdminController, AuthController...
-│   ├── model/                      # TouristPlace, Hotel, Restaurant, HotelBooking, User, Carpool...
+│   ├── controller/                 # HomeController, TripPlannerController, HotelController, AdminController...
+│   ├── model/                      # TouristPlace, Hotel, Restaurant, HotelBooking, User, Carpool... (26 Entities)
 │   ├── repository/                 # Spring Data JPA Repositories
 │   └── service/                    # AuthService, OsrmRouteService, TripPlannerService...
 ├── src/test/java/com/example/dalattravel/
@@ -252,8 +231,7 @@ DaLattravel/
 │   └── HotelBookingServiceTest.java# JUnit 5 Unit test cho Booking Calculation
 ├── TEST_PLAN.md                    # Master Test Plan Quy Chuẩn
 ├── TESTCASES_DALAT_TRAVEL.md       # Full 36 QA Test Cases Suite Matrix
-├── testcase hướng dẫn .md          # Tài liệu hướng dẫn kịch bản kiểm thử
-├── BUG_REPORT.md                   # Nhật ký theo dõi & quản lý lỗi MantisBT/Jira
+├── TEST_CASES.md                   # Full QA Test Suite Document
 └── README.md                       # Tài liệu giới thiệu dự án cho Nhà tuyển dụng
 ```
 
