@@ -5,15 +5,63 @@
 ![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
 ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-3.1-emerald?style=for-the-badge&logo=thymeleaf)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple?style=for-the-badge&logo=bootstrap)
-![QA Testing](https://img.shields.io/badge/QA_Test-36%2F36_PASSED-brightgreen?style=for-the-badge&logo=githubactions)
+![JUnit 5](https://img.shields.io/badge/JUnit5-Passed_100%25-red?style=for-the-badge&logo=junit5)
+![QA Testing](https://img.shields.io/badge/QA_Suite-36%2F36_PASSED-brightgreen?style=for-the-badge&logo=githubactions)
 
 ---
 
 ## 📌 GIỚI THIỆU DỰ ÁN (PROJECT OVERVIEW)
 
-**DaLatTravel** là giải pháp nền tảng du lịch thông minh toàn diện dành cho thành phố Đà Lạt, kết hợp giữa **Thuật toán Tối ưu Lịch trình Du lịch (Traveling Salesman Problem - TSP)**, **Định tuyến thực tế (OSRM API)**, **Hệ thống Ghép xe đi chung tiết kiệm**, **Đặt phòng Khách sạn thời gian thực**, **Đăng nhập Google OAuth2** và **Trang Quản trị Admin phân quyền (RBAC)**.
+**DaLatTravel** là hệ thống du lịch thông minh toàn diện thiết kế riêng cho thành phố Đà Lạt, kết hợp giữa **Thuật toán Tối ưu Lịch trình Du lịch (Traveling Salesman Problem - TSP)**, **Định tuyến thực tế (OSRM Routing API)**, **Hệ thống Ghép xe đi chung tiết kiệm**, **Đặt phòng Khách sạn thời gian thực**, **Xác thực Google Identity OAuth2** và **Trang Quản trị Admin phân quyền (RBAC)**.
 
-Dự án được thiết kế chuẩn kiến trúc **Spring MVC**, áp dụng các tiêu chuẩn phát triển phần mềm hiện đại cùng bộ **36 Test Cases kiểm thử tự động & thủ công (PASSED 100%)**.
+Dự án được xây dựng chuẩn kiến trúc **Spring MVC Monolithic**, áp dụng bộ **Hồ sơ Kiểm thử Toàn diện QA/QC & Unit Test tự động (PASSED 100%)**.
+
+---
+
+## 🧪 PHÂN HỆ KIỂM THỬ TOÀN DIỆN & QUẢN LÝ CHẤT LƯỢNG (QA & TESTING PORTFOLIO)
+
+Dự án được tích hợp bộ **Suite Kiểm Thử Toàn Diện (Fullstack QA & Automation Suite)** chuyên nghiệp dành riêng cho Hồ sơ xin việc Tester / QA / QC / Fullstack Developer:
+
+```mermaid
+flowchart TD
+    A["Hệ Thống DaLatTravel QA Suite"] --> B["1. QA Documentation"]
+    A --> C["2. Unit Tests Backend"]
+    A --> D["3. API & Security Testing"]
+    A --> E["4. UI Automation & E2E"]
+    A --> F["5. Defect Management"]
+
+    B --> B1["TEST_PLAN.md (Master Test Plan)"]
+    B --> B2["TESTCASES_DALAT_TRAVEL.md (36 TCs Matrix)"]
+    B --> B3["testcase hướng dẫn .md (QA Guide)"]
+
+    C --> C1["JUnit 5 + Mockito (AuthServiceTest)"]
+    C --> C2["HotelBookingServiceTest (6/6 Passed)"]
+
+    D --> D1["AuthInterceptor RBAC Check"]
+    D --> D2["Google OAuth2 JWT Verification"]
+
+    E --> E1["Playwright/Selenium (14 HD Screenshots)"]
+
+    F --> F1["BUG_REPORT.md (MantisBT/Jira Log)"]
+```
+
+### 📄 1. Bộ Tài Liệu Quy Chuẩn Kiểm Thử (QA Documentation)
+- 📘 **Master Test Plan ([TEST_PLAN.md](TEST_PLAN.md)):** Kế hoạch kiểm thử tổng thể quy định phạm vi, môi trường, tiêu chí Entry/Exit Criteria và chiến lược Black-box / White-box / Gray-box.
+- 📋 **Ma Trận 36 Test Cases Chi Tiết ([TESTCASES_DALAT_TRAVEL.md](TESTCASES_DALAT_TRAVEL.md)):** Thiết kế ma trận 36 kịch bản kiểm thử áp dụng kỹ thuật Phân vùng tương đương (Equivalence Partitioning) và Phân tích giá trị biên (Boundary Value Analysis).
+- 📗 **Kịch Bản Test Hướng Dẫn Chi Tiết ([testcase hướng dẫn .md](testcase%20h%C6%B0%E1%BB%9Bng%20d%E1%BA%ABn%20.md)):** Tài liệu hướng dẫn kịch bản từng phân hệ.
+- 🐞 **Nhật Ký Báo Cáo & Theo Dõi Lỗi ([BUG_REPORT.md](BUG_REPORT.md)):** Quy trình ghi nhận và quản lý lỗi chuẩn MantisBT / Jira Defect Log (`BUG-001`, `BUG-002`, `BUG-003`).
+
+### 💻 2. Kiểm Thử Đơn Vị Backend - Hộp Trắng (White-box Unit Tests)
+- **Công cụ:** JUnit 5, Mockito (`@Mock`, `@InjectMocks`, `when().thenReturn()`).
+- **Mã nguồn test:**
+  - `AuthServiceTest.java`: Test độc lập logic Đăng ký, Đăng nhập, băm mật khẩu SHA-256, kiểm tra trùng Username/Email.
+  - `HotelBookingServiceTest.java`: Test độc lập logic tính tổng tiền đặt phòng theo đêm, xử lý biên Check-out <= Check-in.
+- **Kết quả:** `6/6 Unit Tests PASSED (100% Pass Rate)`, `BUILD SUCCESS`.
+
+### 🛡️ 3. Kiểm Thử An Toàn & Bảo Mật (Security & RBAC Testing)
+- **Chống Truy Cập Trái Phép (`AuthInterceptor`):** Tự động chặn và chuyển hướng khách chưa đăng nhập hoặc user thường cố truy cập `/admin`.
+- **Đăng Nhập Google Identity Services (OAuth2):** Xác thực an toàn bằng JWT ID Token decode.
+- **Chống SQL Injection & XSS:** Kiểm thử chèn mã độc tại các form tìm kiếm và đặt phòng.
 
 ---
 
@@ -73,6 +121,68 @@ Dự án được thiết kế chuẩn kiến trúc **Spring MVC**, áp dụng c
 
 ---
 
+## 🗄️ THIẾT KẾ CƠ SỞ DỮ LIỆU (DATABASE SCHEMA / ERD)
+
+```mermaid
+erDiagram
+    USERS {
+        string id PK
+        string username
+        string email
+        string password
+        string fullName
+        string phoneNumber
+        string role
+    }
+
+    HOTELS {
+        int id PK
+        string name
+        string address
+        string phone
+        decimal pricePerNight
+        string imageUrl
+    }
+
+    HOTEL_BOOKINGS {
+        bigint id PK
+        string bookingCode
+        string customerName
+        string phoneNumber
+        string email
+        int hotelId FK
+        date checkInDate
+        date checkOutDate
+        int numberOfGuests
+        decimal totalPrice
+        string status
+        timestamp createdAt
+    }
+
+    TOURIST_PLACES {
+        string id PK
+        string name
+        string description
+        decimal ticketPrice
+        int rating
+        string imageUrl
+    }
+
+    RESTAURANTS {
+        int id PK
+        string name
+        string address
+        string phone
+        decimal averagePricePerPerson
+        string imageUrl
+    }
+
+    HOTELS ||--o{ HOTEL_BOOKINGS : "has bookings"
+    USERS ||--o{ HOTEL_BOOKINGS : "makes bookings"
+```
+
+---
+
 ## 🛠️ CÔNG NGHỆ & KIẾN TRÚC HỆ THỐNG (TECH STACK & ARCHITECTURE)
 
 - **Backend Core**: Java 21 LTS, Spring Boot 4.1.0, Spring Data JPA, Hibernate ORM.
@@ -80,58 +190,49 @@ Dự án được thiết kế chuẩn kiến trúc **Spring MVC**, áp dụng c
 - **Algorithms & APIs**: TSP (Traveling Salesman Problem) Greedy Route Optimization, OpenStreetMap OSRM REST Routing API.
 - **Frontend & UI**: HTML5, Vanilla CSS, Bootstrap 5.3, FontAwesome 6, LeafletJS Interactive Maps.
 - **Database**: MySQL 8.0 với InnoDB, UTF-8 Encoding.
-- **Build Tool & Testing**: Maven (`mvnw`), Automated Browser End-to-End Testing (`browser_subagent`).
+- **Testing Suite**: JUnit 5, Mockito, Maven Test, Playwright / Browser E2E Automation.
 
 ---
 
-## 📊 BẢNG TỔNG HỢP KIỂM THỬ ĐÁNH GIÁ CHẤT LƯỢNG (QA/QC TEST MATRIX)
+## 🔑 BIẾN MÔI TRƯỜNG BẢO MẬT & CẤU HÌNH (ENVIRONMENT VARIABLES)
 
-Dự án đã trải qua quá trình kiểm thử toàn diện với **36 Test Cases (PASSED 100%)** phủ khắp các phân hệ. Tham khảo tài liệu kiểm thử chi tiết tại:
-👉 [Tài Liệu Full Test Cases Suite (TESTCASES_DALAT_TRAVEL.md)](TESTCASES_DALAT_TRAVEL.md)  
-👉 [Tài Liệu Hướng Dẫn Kịch Bản Test (testcase hướng dẫn .md)](testcase%20h%C6%B0%E1%BB%9Bng%20d%E1%BA%ABn%20.md)
+Truyền cấu hình bảo mật thông qua biến môi trường để chống rò rỉ secret lên Git repository:
 
-| Phân hệ / Mô-đun | Số Lượng TC | PASSED | FAILED | Tỷ Lệ Thành Công |
-| :--- | :---: | :---: | :---: | :---: |
-| **1. Xác thực & Bảo mật (Auth, Google OAuth2, Security Interceptor)** | 10 | 10 | 0 | **100%** |
-| **2. Lên Lịch Trình Tự Động (Trip Planner, TSP & OSRM API)** | 5 | 5 | 0 | **100%** |
-| **3. Ghép Xe Đi Chung (Carpooling System)** | 3 | 3 | 0 | **100%** |
-| **4. Danh Mục Địa Điểm, Khách Sạn & Nhà Hàng** | 5 | 5 | 0 | **100%** |
-| **5. Đặt Phòng Khách Sạn (Booking & Calculation)** | 4 | 4 | 0 | **100%** |
-| **6. Quản Trị Hệ Thống (Admin Dashboard & CRUD)** | 7 | 7 | 0 | **100%** |
-| **7. Bài Viết & Liên Hệ (Blog & Contact Form)** | 2 | 2 | 0 | **100%** |
-| **TỔNG CỘNG** | **36** | **36** | **0** | **100%** |
+```bash
+export DB_URL="jdbc:mysql://localhost:3306/dalattravel_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&characterEncoding=UTF-8"
+export DB_USERNAME="root"
+export DB_PASSWORD="your_secure_db_password"
+export GOOGLE_CLIENT_ID="1071806914161-7tjfbvs26pk1n47t89lr14q201djorre.apps.googleusercontent.com"
+```
 
 ---
 
-## 🚀 HƯỚNG DẪN CÀI ĐẶT & CHẠY DỰ ÁN (SETUP INSTRUCTIONS)
+## ⚙️ HƯỚNG DẪN CÀI ĐẶT & VẬN HÀNH (SETUP & OPERATION)
 
-### 1. Yêu Cầu Tiền Điều Kiện (Prerequisites)
-- **Java Development Kit (JDK)**: Java 21 trở lên.
-- **Database**: MySQL 8.0+ đang hoạt động tại `localhost:3306`.
-
-### 2. Cấu Hình CSDL (Database Setup)
-Tạo CSDL MySQL:
+### 1. Khởi chạy MySQL Database
+Tạo database MySQL:
 ```sql
 CREATE DATABASE dalattravel_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Cấu hình tài khoản CSDL trong `src/main/resources/application.properties` (Mặc định: `root` / password trống hoặc tự chỉnh).
-
-### 3. Biên Dịch & Chạy Ứng Dụng (Run Application)
-Tải dependency và biên dịch dự án:
+### 2. Chạy Unit Tests kiểm thử hệ thống
 ```powershell
-.\mvnw.cmd clean test-compile
+.\mvnw.cmd test
 ```
 
-Khởi chạy ứng dụng Spring Boot:
+### 3. Khởi chạy Backend Application (Spring Boot)
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-Sau khi ứng dụng khởi chạy thành công, mở trình duyệt truy cập:
-- **Trang chủ**: `http://localhost:8080`
-- **Tài khoản Admin mẫu**: `admin` / `admin123`
-- **Tài khoản User mẫu**: `user` / `user123`
+Sau khi server khởi chạy tại `http://localhost:8080`:
+
+### 🔑 Tài Khoản Thử Nghiệm Mẫu (Sample Testing Accounts)
+
+| Vai trò (Role) | Tên đăng nhập (Username) | Mật khẩu mẫu (Password) | Phân quyền & Mục đích kiểm thử |
+| :--- | :--- | :--- | :--- |
+| **Quản trị viên (Admin)** | `admin` | `admin123` | Quyền Quản trị viên hệ thống (Admin Dashboard, Duyệt đơn đặt phòng, CRUD Khách sạn/Địa điểm/Nhà hàng, Phân quyền RBAC). |
+| **Khách hàng mẫu (User)** | `user` | `user123` | Quyền Khách hàng (Lên lịch trình tự động, Ghép xe đi chung, Đặt phòng khách sạn, Đăng nhập Google OAuth2). |
 
 ---
 
@@ -139,18 +240,20 @@ Sau khi ứng dụng khởi chạy thành công, mở trình duyệt truy cập:
 
 ```
 DaLattravel/
-├── docs/screenshots/               # Thư viện ảnh chụp tính năng cho README
+├── docs/screenshots/               # Thư viện 14 ảnh chụp kiểm thử tính năng
 ├── src/main/java/com/example/dalattravel/
 │   ├── config/                     # WebMvcConfig, AuthInterceptor, DataSeeder
 │   ├── controller/                 # HomeController, TripPlannerController, HotelController, AdminController, AuthController...
 │   ├── model/                      # TouristPlace, Hotel, Restaurant, HotelBooking, User, Carpool...
 │   ├── repository/                 # Spring Data JPA Repositories
 │   └── service/                    # AuthService, OsrmRouteService, TripPlannerService...
-├── src/main/resources/
-│   ├── templates/                  # Thymeleaf HTML Views (admin/, auth/, hotels/, trip-planner/, fragments/)
-│   └── application.properties     # Config MySQL, Port 8080
-├── TESTCASES_DALAT_TRAVEL.md      # Full 36 QA Test Cases Suite Document
-├── testcase hướng dẫn .md          # Kịch bản kiểm thử hướng dẫn chi tiết
+├── src/test/java/com/example/dalattravel/
+│   ├── AuthServiceTest.java        # JUnit 5 Unit test cho Auth & Login
+│   └── HotelBookingServiceTest.java# JUnit 5 Unit test cho Booking Calculation
+├── TEST_PLAN.md                    # Master Test Plan Quy Chuẩn
+├── TESTCASES_DALAT_TRAVEL.md       # Full 36 QA Test Cases Suite Matrix
+├── testcase hướng dẫn .md          # Tài liệu hướng dẫn kịch bản kiểm thử
+├── BUG_REPORT.md                   # Nhật ký theo dõi & quản lý lỗi MantisBT/Jira
 └── README.md                       # Tài liệu giới thiệu dự án cho Nhà tuyển dụng
 ```
 
