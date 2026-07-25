@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - DaLatTravel'">DaLatTravel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --primary-dark: #1b5e20;
+            --accent-orange: #ff9800;
+            --bg-light: #f8fafc;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+            background-color: var(--bg-light);
+            color: #1e293b;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            padding: 12px 0;
+            box-shadow: 0 4px 20px rgba(27, 94, 32, 0.15);
+        }
+        .navbar-custom .navbar-brand {
+            font-weight: 800;
+            font-size: 1.45rem;
+            letter-spacing: -0.5px;
+        }
+        .navbar-custom .nav-link {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.88) !important;
+            padding: 8px 14px !important;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+        .navbar-custom .nav-link:hover, 
+        .navbar-custom .nav-link.active {
+            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .footer-custom {
+            background: #0f172a;
+            color: #94a3b8;
+            padding: 48px 0 24px;
+        }
+        .footer-custom h5 {
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+        .footer-custom a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-custom a:hover {
+            color: #38ef7d;
+        }
+        .card-custom-img {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            background: #ffffff;
+        }
+        .card-custom:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 36px rgba(46, 125, 50, 0.12);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Unified Navigation Bar Fragment -->
+<nav th:fragment="navbar(activePage)" class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-white" href="/">
+            <i class="fa-solid fa-tree text-warning fs-3"></i>
+            <span>DaLatTravel</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto gap-1 align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'home'} ? 'active' : ''" href="/">
+                        <i class="fa-solid fa-house me-1"></i> Trang chủ
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'trip-planner'} ? 'active' : ''" href="/trip-planner">
+                        <i class="fa-solid fa-route me-1"></i> Lên lịch trình
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'carpool'} ? 'active' : ''" href="/carpool">
+                        <i class="fa-solid fa-car-side me-1"></i> Ghép xe đi chung
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'tourist-places'} ? 'active' : ''" href="/tourist-places">
+                        <i class="fa-solid fa-mountain me-1"></i> Địa điểm
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'hotels'} ? 'active' : ''" href="/hotels">
+                        <i class="fa-solid fa-hotel me-1"></i> Khách sạn
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'restaurants'} ? 'active' : ''" href="/restaurants">
+                        <i class="fa-solid fa-utensils me-1"></i> Nhà hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'blog'} ? 'active' : ''" href="/blog">
+                        <i class="fa-solid fa-newspaper me-1"></i> Bài viết
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${activePage == 'contact'} ? 'active' : ''" href="/contact">
+                        <i class="fa-solid fa-envelope me-1"></i> Liên hệ
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Unified Footer Fragment -->
+<footer th:fragment="footer" class="footer-custom mt-5">
+    <div class="container">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4 col-md-6">
+                <a class="d-inline-flex align-items-center gap-2 text-white text-decoration-none fs-4 fw-bold mb-3" href="/">
+                    <i class="fa-solid fa-tree text-success"></i> DaLatTravel
+                </a>
+                <p class="small text-secondary">Hệ thống lập lịch trình du lịch tự động tối ưu bằng thuật toán thông minh & Nền tảng kết nối ghép xe đi chung tiết kiệm chi phí đến Đà Lạt.</p>
+                <div class="d-flex gap-3 text-secondary fs-5 mt-3">
+                    <a href="#"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <h5>Khám Phá</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2 small">
+                    <li><a href="/trip-planner"><i class="fa-solid fa-chevron-right me-1 small"></i> Lên Lịch Trình</a></li>
+                    <li><a href="/carpool"><i class="fa-solid fa-chevron-right me-1 small"></i> Ghép Xe Đi Chung</a></li>
+                    <li><a href="/tourist-places"><i class="fa-solid fa-chevron-right me-1 small"></i> Địa Điểm Nổi Bật</a></li>
+                    <li><a href="/hotels"><i class="fa-solid fa-chevron-right me-1 small"></i> Khách Sạn & Resort</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5>Dịch Vụ Du Lịch</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2 small">
+                    <li><a href="/restaurants"><i class="fa-solid fa-chevron-right me-1 small"></i> Ẩm Thực Đà Lạt</a></li>
+                    <li><a href="/blog"><i class="fa-solid fa-chevron-right me-1 small"></i> Cẩm Nang Du Lịch</a></li>
+                    <li><a href="/contact"><i class="fa-solid fa-chevron-right me-1 small"></i> Liên Hệ Hỗ Trợ</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <h5>Liên Hệ Đà Lạt</h5>
+                <p class="small mb-1"><i class="fa-solid fa-location-dot me-2 text-danger"></i> 1 Trần Phú, Phường 3, TP. Đà Lạt</p>
+                <p class="small mb-1"><i class="fa-solid fa-phone me-2 text-success"></i> Hotline: 0263 382 5444</p>
+                <p class="small mb-0"><i class="fa-solid fa-envelope me-2 text-primary"></i> hotro@dalattravel.vn</p>
+            </div>
+        </div>
+        <hr class="border-secondary opacity-25 my-4">
+        <div class="text-center small">
+            <p class="mb-0">&copy; 2026 Đà Lạt Travel System. Hệ thống Lên lịch trình tự động & Kết nối Ghép xe đi chung.</p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

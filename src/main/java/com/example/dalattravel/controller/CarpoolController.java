@@ -1,13 +1,13 @@
-package com.example.DaLattravel.controller;
+package com.example.dalattravel.controller;
 
-import com.example.DaLattravel.dto.CarpoolMatchResult;
-import com.example.DaLattravel.dto.CarpoolTripInfo;
-import com.example.DaLattravel.dto.CarpoolViewModel;
-import com.example.DaLattravel.dto.RouteMatchResult;
-import com.example.DaLattravel.model.*;
-import com.example.DaLattravel.repository.*;
-import com.example.DaLattravel.service.CarpoolMatchingService;
-import com.example.DaLattravel.service.RouteMatchingService;
+import com.example.dalattravel.dto.CarpoolMatchResult;
+import com.example.dalattravel.dto.CarpoolTripInfo;
+import com.example.dalattravel.dto.CarpoolViewModel;
+import com.example.dalattravel.dto.RouteMatchResult;
+import com.example.dalattravel.model.*;
+import com.example.dalattravel.repository.*;
+import com.example.dalattravel.service.CarpoolMatchingService;
+import com.example.dalattravel.service.RouteMatchingService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

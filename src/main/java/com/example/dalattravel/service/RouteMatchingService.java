@@ -1,11 +1,11 @@
-package com.example.DaLattravel.service;
+package com.example.dalattravel.service;
 
-import com.example.DaLattravel.dto.OsrmRouteResult;
-import com.example.DaLattravel.dto.RouteMatchResult;
-import com.example.DaLattravel.model.Passenger;
-import com.example.DaLattravel.model.Vehicle;
-import com.example.DaLattravel.repository.PassengerRepository;
-import com.example.DaLattravel.repository.VehicleRepository;
+import com.example.dalattravel.dto.OsrmRouteResult;
+import com.example.dalattravel.dto.RouteMatchResult;
+import com.example.dalattravel.model.Passenger;
+import com.example.dalattravel.model.Vehicle;
+import com.example.dalattravel.repository.PassengerRepository;
+import com.example.dalattravel.repository.VehicleRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;

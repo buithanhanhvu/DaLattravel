@@ -1,6 +1,6 @@
-package com.example.DaLattravel.dto;
+package com.example.dalattravel.dto;
 
-import com.example.DaLattravel.model.Vehicle;
+import com.example.dalattravel.model.Vehicle;
 import lombok.*;
 
 @Getter

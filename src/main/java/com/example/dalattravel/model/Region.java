@@ -1,4 +1,4 @@
-package com.example.DaLattravel.model;
+package com.example.dalattravel.model;
 
 import jakarta.persistence.*;
 import lombok.*;

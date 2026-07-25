@@ -1,7 +1,7 @@
-package com.example.DaLattravel.controller;
+package com.example.dalattravel.controller;
 
-import com.example.DaLattravel.model.Restaurant;
-import com.example.DaLattravel.repository.RestaurantRepository;
+import com.example.dalattravel.model.Restaurant;
+import com.example.dalattravel.repository.RestaurantRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

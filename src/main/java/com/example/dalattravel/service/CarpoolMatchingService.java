@@ -1,9 +1,9 @@
-package com.example.DaLattravel.service;
+package com.example.dalattravel.service;
 
-import com.example.DaLattravel.dto.*;
-import com.example.DaLattravel.model.Passenger;
-import com.example.DaLattravel.model.PassengerGroup;
-import com.example.DaLattravel.model.Vehicle;
+import com.example.dalattravel.dto.*;
+import com.example.dalattravel.model.Passenger;
+import com.example.dalattravel.model.PassengerGroup;
+import com.example.dalattravel.model.Vehicle;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

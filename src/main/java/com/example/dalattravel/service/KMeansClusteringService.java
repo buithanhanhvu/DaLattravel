@@ -1,6 +1,6 @@
-package com.example.DaLattravel.service;
+package com.example.dalattravel.service;
 
-import com.example.DaLattravel.model.Passenger;
+import com.example.dalattravel.model.Passenger;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

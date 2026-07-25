@@ -1,4 +1,4 @@
-package com.example.DaLattravel.dto;
+package com.example.dalattravel.dto;
 
 import lombok.*;
 import java.time.LocalDateTime;

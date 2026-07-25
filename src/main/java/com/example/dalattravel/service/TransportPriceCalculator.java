@@ -1,12 +1,12 @@
-package com.example.DaLattravel.service;
+package com.example.dalattravel.service;
 
-import com.example.DaLattravel.dto.TransportPriceResult;
-import com.example.DaLattravel.model.LegacyLocation;
-import com.example.DaLattravel.model.TransportOption;
-import com.example.DaLattravel.model.TransportPriceHistory;
-import com.example.DaLattravel.repository.LegacyLocationRepository;
-import com.example.DaLattravel.repository.TransportOptionRepository;
-import com.example.DaLattravel.repository.TransportPriceHistoryRepository;
+import com.example.dalattravel.dto.TransportPriceResult;
+import com.example.dalattravel.model.LegacyLocation;
+import com.example.dalattravel.model.TransportOption;
+import com.example.dalattravel.model.TransportPriceHistory;
+import com.example.dalattravel.repository.LegacyLocationRepository;
+import com.example.dalattravel.repository.TransportOptionRepository;
+import com.example.dalattravel.repository.TransportPriceHistoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

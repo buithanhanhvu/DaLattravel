@@ -1,6 +1,6 @@
-package com.example.DaLattravel.repository;
+package com.example.dalattravel.repository;
 
-import com.example.DaLattravel.model.Region;
+import com.example.dalattravel.model.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

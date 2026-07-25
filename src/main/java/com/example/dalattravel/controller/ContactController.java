@@ -1,7 +1,7 @@
-package com.example.DaLattravel.controller;
+package com.example.dalattravel.controller;
 
-import com.example.DaLattravel.model.Contact;
-import com.example.DaLattravel.repository.ContactRepository;
+import com.example.dalattravel.model.Contact;
+import com.example.dalattravel.repository.ContactRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

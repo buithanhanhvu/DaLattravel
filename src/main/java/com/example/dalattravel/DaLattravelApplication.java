@@ -1,4 +1,4 @@
-package com.example.DaLattravel;
+package com.example.dalattravel;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

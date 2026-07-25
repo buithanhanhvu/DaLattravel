@@ -1,6 +1,6 @@
-package com.example.DaLattravel.controller;
+package com.example.dalattravel.controller;
 
-import com.example.DaLattravel.repository.FestivalRepository;
+import com.example.dalattravel.repository.FestivalRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.example.DaLattravel.model;
+package com.example.dalattravel.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -53,6 +53,9 @@ public class TouristPlace {
     private String reviewContent;
 
     private int rating;
+
+    private java.math.BigDecimal ticketPrice;
+    private Integer avgVisitDurationMin;
 
     @OneToMany(mappedBy = "touristPlace", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default

@@ -1,11 +1,10 @@
-package com.example.DaLattravel.controller;
+package com.example.dalattravel.controller;
 
-import com.example.DaLattravel.dto.TransportPriceResult;
-import com.example.DaLattravel.dto.TripPlannerViewModel;
-import com.example.DaLattravel.model.*;
-import com.example.DaLattravel.repository.*;
-import com.example.DaLattravel.service.KMeansClusteringService;
-import com.example.DaLattravel.service.TransportPriceCalculator;
+import com.example.dalattravel.dto.TripPlanResult;
+import com.example.dalattravel.dto.TripPlannerViewModel;
+import com.example.dalattravel.model.*;
+import com.example.dalattravel.repository.*;
+import com.example.dalattravel.service.TripPlannerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,9 +23,7 @@ public class TripPlannerController {
     private final TransportOptionRepository transportOptionRepository;
     private final HotelRepository hotelRepository;
     private final RestaurantRepository restaurantRepository;
-    private final AttractionRepository attractionRepository;
-    private final TransportPriceCalculator priceCalculator;
-    private final KMeansClusteringService kmeansService;
+    private final TripPlannerService tripPlannerService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public TripPlannerController(
@@ -35,48 +32,91 @@ public class TripPlannerController {
             TransportOptionRepository transportOptionRepository,
             HotelRepository hotelRepository,
             RestaurantRepository restaurantRepository,
-            AttractionRepository attractionRepository,
-            TransportPriceCalculator priceCalculator,
-            KMeansClusteringService kmeansService) {
+            TripPlannerService tripPlannerService) {
         this.categoryRepository = categoryRepository;
         this.touristPlaceRepository = touristPlaceRepository;
         this.transportOptionRepository = transportOptionRepository;
         this.hotelRepository = hotelRepository;
         this.restaurantRepository = restaurantRepository;
-        this.attractionRepository = attractionRepository;
-        this.priceCalculator = priceCalculator;
-        this.kmeansService = kmeansService;
+        this.tripPlannerService = tripPlannerService;
     }
 
     @GetMapping
     public String index(Model model) {
         List<Category> categories = categoryRepository.findAll();
         List<TouristPlace> touristPlaces = touristPlaceRepository.findAll();
+        List<Hotel> hotels = hotelRepository.findAll();
+        List<Restaurant> restaurants = restaurantRepository.findAll();
         List<TransportOption> transportOptions = transportOptionRepository.findAll();
 
         TripPlannerViewModel viewModel = TripPlannerViewModel.builder()
                 .categories(categories)
                 .touristPlaces(touristPlaces)
+                .hotels(hotels)
+                .restaurants(restaurants)
                 .transportOptions(transportOptions)
-                .hotels(new ArrayList<>())
-                .restaurants(new ArrayList<>())
-                .attractions(new ArrayList<>())
-                .suggestions(new ArrayList<>())
+                .numberOfDays(3)
+                .budget(BigDecimal.valueOf(5000000))
+                .startLatitude(11.9404)
+                .startLongitude(108.4583)
+                .startLocation("Trung tâm TP. Đà Lạt")
                 .build();
 
         model.addAttribute("model", viewModel);
 
+        // Build rich selectable JSON list combining Places, Hotels, and Restaurants
+        List<Map<String, Object>> combinedSelectableList = new ArrayList<>();
+
+        // 1. Tourist Places (Category ID 3)
+        for (TouristPlace tp : touristPlaces) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", tp.getId());
+            map.put("name", tp.getName());
+            map.put("latitude", tp.getLatitude());
+            map.put("longitude", tp.getLongitude());
+            map.put("categoryId", tp.getCategoryId() != null ? tp.getCategoryId() : 3);
+            map.put("categoryName", tp.getCategory() != null ? tp.getCategory().getName() : "Địa điểm du lịch");
+            map.put("type", "ATTRACTION");
+            map.put("description", tp.getDescription());
+            map.put("rating", tp.getRating());
+            map.put("ticketPrice", tp.getTicketPrice() != null ? tp.getTicketPrice() : 0);
+            combinedSelectableList.add(map);
+        }
+
+        // 2. Hotels (Category ID 1)
+        for (Hotel h : hotels) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", "H_" + h.getId());
+            map.put("name", h.getName());
+            map.put("latitude", h.getLatitude() != 0 ? h.getLatitude() : 11.9365);
+            map.put("longitude", h.getLongitude() != 0 ? h.getLongitude() : 108.4412);
+            map.put("categoryId", 1);
+            map.put("categoryName", "Khách sạn");
+            map.put("type", "HOTEL");
+            map.put("description", h.getAddress() + " - Giá từ " + (h.getPricePerNight() != null ? h.getPricePerNight() : 0) + " VNĐ/đêm");
+            map.put("rating", 5);
+            map.put("ticketPrice", 0);
+            combinedSelectableList.add(map);
+        }
+
+        // 3. Restaurants (Category ID 2)
+        for (Restaurant r : restaurants) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", "R_" + r.getId());
+            map.put("name", r.getName());
+            map.put("latitude", r.getLatitude() != 0 ? r.getLatitude() : 11.9404);
+            map.put("longitude", r.getLongitude() != 0 ? r.getLongitude() : 108.4383);
+            map.put("categoryId", 2);
+            map.put("categoryName", "Nhà hàng/Quán ăn");
+            map.put("type", "RESTAURANT");
+            map.put("description", r.getAddress() + " - Giá trung bình " + (r.getAveragePricePerPerson() != null ? r.getAveragePricePerPerson() : 0) + " VNĐ/người");
+            map.put("rating", 5);
+            map.put("ticketPrice", 0);
+            combinedSelectableList.add(map);
+        }
+
         try {
-            List<Map<String, Object>> placeJsonList = touristPlaces.stream().map(tp -> {
-                Map<String, Object> map = new HashMap<>();
-                map.put("id", tp.getId());
-                map.put("name", tp.getName());
-                map.put("latitude", tp.getLatitude());
-                map.put("longitude", tp.getLongitude());
-                map.put("categoryId", tp.getCategoryId());
-                return map;
-            }).collect(Collectors.toList());
-            model.addAttribute("touristPlacesJson", objectMapper.writeValueAsString(placeJsonList));
+            model.addAttribute("touristPlacesJson", objectMapper.writeValueAsString(combinedSelectableList));
         } catch (Exception e) {
             model.addAttribute("touristPlacesJson", "[]");
         }
@@ -88,62 +128,92 @@ public class TripPlannerController {
     public String planTrip(@ModelAttribute("model") TripPlannerViewModel inputModel, Model model) {
         List<Category> categories = categoryRepository.findAll();
         List<TouristPlace> allPlaces = touristPlaceRepository.findAll();
+        List<Hotel> hotels = hotelRepository.findAll();
+        List<Restaurant> restaurants = restaurantRepository.findAll();
         List<TransportOption> transportOptions = transportOptionRepository.findAll();
 
         inputModel.setCategories(categories);
         inputModel.setTouristPlaces(allPlaces);
+        inputModel.setHotels(hotels);
+        inputModel.setRestaurants(restaurants);
         inputModel.setTransportOptions(transportOptions);
 
         if (inputModel.getBudget() == null || inputModel.getBudget().compareTo(BigDecimal.valueOf(100000)) < 0) {
-            model.addAttribute("errorMessage", "Ngân sách tối thiểu 100,000 VNĐ cho chuyến đi Đà Lạt.");
+            model.addAttribute("errorMessage", "Vui lòng nhập ngân sách dự kiến hợp lệ (Tối thiểu 100,000 VNĐ).");
             return index(model);
         }
 
-        List<String> suggestions = new ArrayList<>();
         List<TouristPlace> selectedPlaces = new ArrayList<>();
-
         if (inputModel.getSelectedTouristPlaceIds() != null && !inputModel.getSelectedTouristPlaceIds().isEmpty()) {
-            selectedPlaces = allPlaces.stream()
-                    .filter(tp -> inputModel.getSelectedTouristPlaceIds().contains(tp.getId()))
-                    .collect(Collectors.toList());
+            for (String id : inputModel.getSelectedTouristPlaceIds()) {
+                if (id.startsWith("H_")) {
+                    try {
+                        int hId = Integer.parseInt(id.substring(2));
+                        Optional<Hotel> hOpt = hotelRepository.findById(hId);
+                        if (hOpt.isPresent()) {
+                            Hotel h = hOpt.get();
+                            selectedPlaces.add(TouristPlace.builder()
+                                    .id("H_" + h.getId())
+                                    .name(h.getName())
+                                    .latitude(h.getLatitude() != 0 ? h.getLatitude() : 11.9365)
+                                    .longitude(h.getLongitude() != 0 ? h.getLongitude() : 108.4412)
+                                    .description(h.getAddress())
+                                    .rating(5)
+                                    .build());
+                        }
+                    } catch (Exception ignored) {}
+                } else if (id.startsWith("R_")) {
+                    try {
+                        int rId = Integer.parseInt(id.substring(2));
+                        Optional<Restaurant> rOpt = restaurantRepository.findById(rId);
+                        if (rOpt.isPresent()) {
+                            Restaurant r = rOpt.get();
+                            selectedPlaces.add(TouristPlace.builder()
+                                    .id("R_" + r.getId())
+                                    .name(r.getName())
+                                    .latitude(r.getLatitude() != 0 ? r.getLatitude() : 11.9404)
+                                    .longitude(r.getLongitude() != 0 ? r.getLongitude() : 108.4383)
+                                    .description(r.getAddress())
+                                    .rating(5)
+                                    .build());
+                        }
+                    } catch (Exception ignored) {}
+                } else {
+                    for (TouristPlace tp : allPlaces) {
+                        if (tp.getId().equals(id)) {
+                            selectedPlaces.add(tp);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         if (selectedPlaces.isEmpty()) {
             selectedPlaces = allPlaces.stream().limit(5).collect(Collectors.toList());
         }
 
-        if (inputModel.getStartLatitude() != null && inputModel.getStartLongitude() != null && inputModel.getSelectedTransportId() != null) {
-            TransportPriceResult priceResult = priceCalculator.getFinalPrice(
-                    inputModel.getStartLatitude(), inputModel.getStartLongitude(), inputModel.getSelectedTransportId());
-            suggestions.add(String.format("Chi phí di chuyển ước tính: %,d VNĐ (%s)", priceResult.getPrice().longValue(), priceResult.getNote()));
-        }
+        double startLat = (inputModel.getStartLatitude() != null) ? inputModel.getStartLatitude() : 11.9404;
+        double startLng = (inputModel.getStartLongitude() != null) ? inputModel.getStartLongitude() : 108.4583;
+        String startName = (inputModel.getStartLocation() != null && !inputModel.getStartLocation().trim().isEmpty())
+                ? inputModel.getStartLocation() : "Vị trí xuất phát Đà Lạt";
 
-        if (inputModel.getNumberOfDays() > 0 && !selectedPlaces.isEmpty()) {
-            int k = Math.max(1, Math.min(inputModel.getNumberOfDays(), selectedPlaces.size()));
-            List<Passenger> dummyPassengers = selectedPlaces.stream().map(p -> {
-                Passenger pass = new Passenger();
-                pass.setId(Math.abs(p.getId().hashCode()));
-                pass.setPickupLatitude(p.getLatitude());
-                pass.setPickupLongitude(p.getLongitude());
-                pass.setName(p.getName());
-                return pass;
-            }).collect(Collectors.toList());
+        TripPlanResult planResult = tripPlannerService.generatePlans(
+                inputModel.getBudget(),
+                inputModel.getNumberOfDays() > 0 ? inputModel.getNumberOfDays() : 3,
+                inputModel.getTransportType(),
+                startLat,
+                startLng,
+                startName,
+                selectedPlaces);
 
-            List<KMeansClusteringService.Cluster> clusters = kmeansService.clusterPassengers(dummyPassengers, k);
-
-            for (int i = 0; i < clusters.size(); i++) {
-                KMeansClusteringService.Cluster cluster = clusters.get(i);
-                String dayNames = cluster.getPoints().stream().map(pt -> pt.getPassenger().getName()).collect(Collectors.joining(", "));
-                suggestions.add(String.format("Ngày %d: Khám phá các địa điểm gần nhau -> %s", i + 1, dayNames));
-            }
-        }
-
-        inputModel.setSuggestions(suggestions);
-        model.addAttribute("model", inputModel);
+        model.addAttribute("planResult", planResult);
 
         try {
-            model.addAttribute("touristPlacesJson", objectMapper.writeValueAsString(allPlaces));
-        } catch (Exception ignored) {}
+            model.addAttribute("planResultJson", objectMapper.writeValueAsString(planResult));
+        } catch (Exception e) {
+            model.addAttribute("planResultJson", "{}");
+        }
 
         return "trip-planner/result";
     }

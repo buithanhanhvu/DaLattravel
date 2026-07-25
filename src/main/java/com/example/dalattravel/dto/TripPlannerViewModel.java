@@ -1,6 +1,6 @@
-package com.example.DaLattravel.dto;
+package com.example.dalattravel.dto;
 
-import com.example.DaLattravel.model.*;
+import com.example.dalattravel.model.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;

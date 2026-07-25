@@ -1,6 +1,6 @@
-package com.example.DaLattravel.repository;
+package com.example.dalattravel.repository;
 
-import com.example.DaLattravel.model.Hotel;
+import com.example.dalattravel.model.Hotel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

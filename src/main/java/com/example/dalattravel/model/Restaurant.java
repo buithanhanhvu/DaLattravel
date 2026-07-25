@@ -1,4 +1,4 @@
-package com.example.DaLattravel.model;
+package com.example.dalattravel.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,6 +28,12 @@ public class Restaurant {
 
     @Column(precision = 18, scale = 2)
     private BigDecimal averagePricePerPerson;
+
+    private double latitude;
+    private double longitude;
+
+    @Column(length = 300)
+    private String imageUrl;
 
     @Column(length = 6)
     private String touristPlaceId;

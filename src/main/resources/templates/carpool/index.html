@@ -1,61 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Ghép Xe Đi Chung Đà Lạt - DaLatTravel</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<head th:replace="~{fragments/header :: head('Ghép Xe Đi Chung Đà Lạt')}">
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-success fs-3" href="/">🌲 DaLatTravel</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="/trip-planner">Lên lịch trình</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/carpool">Ghép xe đi chung</a></li>
-            </ul>
-        </div>
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar('carpool')}"></nav>
+
+<!-- Header Section -->
+<div class="bg-danger bg-gradient text-white py-4 mb-4 shadow-sm">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-1"><i class="fa-solid fa-car-side me-2"></i>Nền Tảng Ghép Xe Đi Chung Đà Lạt</h2>
+        <p class="mb-0 opacity-90">Kết nối hành khách & tài xế cùng tuyến đường, tối ưu chi phí di chuyển TPHCM - Đà Lạt - Sân bay</p>
     </div>
-</nav>
+</div>
 
-<div class="container py-5">
+<!-- Main Content -->
+<div class="container mb-5">
     <div class="row g-4">
+        <!-- Form Section -->
         <div class="col-lg-6">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-danger text-white p-4 rounded-top-4">
-                    <h3 class="mb-0 fw-bold"><i class="fa-solid fa-car-side"></i> Đăng Ký Ghép Xe Đi Chung</h3>
-                    <p class="mb-0 text-white-50">Thuật toán Min-Cost Max-Flow & PDPTW kết nối chuyến xe tối ưu nhất.</p>
+            <div class="card card-custom h-100">
+                <div class="card-header bg-danger text-white p-4 rounded-top-4 border-0">
+                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-car me-2"></i>Đăng Ký Tìm & Ghép Xe</h4>
+                    <p class="mb-0 text-white-50 small mt-1">Thuật toán Min-Cost Max-Flow & PDPTW kết nối chuyến xe tối ưu nhất.</p>
                 </div>
                 <div class="card-body p-4">
 
-                    <div th:if="${model.statusMessage}" class="alert alert-info fw-bold" th:text="${model.statusMessage}"></div>
+                    <div th:if="${model.statusMessage}" class="alert alert-info fw-bold rounded-3" th:text="${model.statusMessage}"></div>
 
                     <form th:action="@{/carpool/request}" method="post" th:object="${model}">
                         <div class="mb-3">
                             <label class="form-label fw-bold">Họ và tên khách hàng:</label>
-                            <input type="text" class="form-control" th:field="*{passengerName}" placeholder="Nguyễn Văn A" required />
+                            <input type="text" class="form-control form-control-lg" th:field="*{passengerName}" placeholder="Nguyễn Văn A" required />
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Số điện thoại:</label>
-                            <input type="text" class="form-control" th:field="*{phoneNumber}" placeholder="0901234567" required />
+                            <label class="form-label fw-bold">Số điện thoại liên hệ:</label>
+                            <input type="text" class="form-control form-control-lg" th:field="*{phoneNumber}" placeholder="0901234567" required />
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="row mb-3 g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Địa chỉ đón:</label>
-                                <input type="text" class="form-control" th:field="*{pickupAddress}" placeholder="Bến xe Miền Đông" required />
+                                <label class="form-label fw-bold">Điểm đón khách:</label>
+                                <input type="text" class="form-control" th:field="*{pickupAddress}" placeholder="Bến xe Miền Đông / Sân bay" required />
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Địa chỉ đến:</label>
-                                <input type="text" class="form-control" th:field="*{dropoffAddress}" placeholder="Chợ Đà Lạt" required />
+                                <label class="form-label fw-bold">Điểm trả khách:</label>
+                                <input type="text" class="form-control" th:field="*{dropoffAddress}" placeholder="Chợ Đà Lạt / Khách sạn" required />
                             </div>
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="row mb-4 g-3">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Số lượng khách:</label>
                                 <input type="number" class="form-control" th:field="*{numberOfPassengers}" min="1" max="16" value="1" required />
@@ -63,35 +59,40 @@
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Loại xe mong muốn:</label>
                                 <select class="form-select" th:field="*{requestedVehicleSeats}">
-                                    <option value="4">Xe 4 chỗ</option>
-                                    <option value="7">Xe 7 chỗ</option>
-                                    <option value="9">Xe 9 chỗ (Limousine)</option>
+                                    <option value="4">Xe 4 chỗ (Gia đình)</option>
+                                    <option value="7">Xe 7 chỗ (Nhiều hành lý)</option>
+                                    <option value="9">Xe 9 chỗ VIP (Limousine)</option>
                                 </select>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold shadow-sm">
-                            <i class="fa-solid fa-magnifying-glass-location"></i> Tìm & Ghép Xe Đi Chung
+                        <button type="submit" class="btn btn-danger btn-lg w-100 fw-bold shadow rounded-pill py-3">
+                            <i class="fa-solid fa-magnifying-glass-location me-2"></i> TÌM & GHÉP XE ĐI CHUNG NGAY
                         </button>
                     </form>
                 </div>
             </div>
         </div>
 
+        <!-- Available Trips Section -->
         <div class="col-lg-6">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-dark text-white p-4 rounded-top-4">
-                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-list-ul"></i> Các Chuyến Xe Đang Khả Dụng</h4>
+            <div class="card card-custom h-100">
+                <div class="card-header bg-dark text-white p-4 rounded-top-4 border-0">
+                    <h4 class="mb-0 fw-bold"><i class="fa-solid fa-list-check me-2"></i>Các Chuyến Xe Đang Khả Dụng</h4>
                 </div>
                 <div class="card-body p-4">
-                    <div class="list-group list-group-flush">
-                        <div class="list-group-item py-3" th:each="trip : ${model.openTrips}">
-                            <div class="d-flex justify-content-between align-items-center mb-1">
-                                <h5 class="fw-bold mb-0 text-primary" th:text="${trip.driverName} + ' - ' + ${trip.vehicleType}">Tài xế</h5>
-                                <span class="badge bg-success" th:text="'Trống ' + ${trip.availableSeats} + '/' + ${trip.totalSeats} + ' ghế'">Ghế</span>
+                    <div class="list-group list-group-flush gap-3">
+                        <div class="list-group-item p-3 border rounded-3 bg-light" th:each="trip : ${model.openTrips}">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="fw-bold mb-0 text-primary" th:text="${trip.driverName} + ' — ' + ${trip.vehicleType}">Tài xế</h5>
+                                <span class="badge bg-success px-3 py-2 rounded-pill" th:text="'Còn trống ' + ${trip.availableSeats} + '/' + ${trip.totalSeats} + ' ghế'">Ghế</span>
                             </div>
-                            <small class="text-muted d-block"><i class="fa-solid fa-circle-dot text-success"></i> Đón: <span th:text="${trip.pickupAddress}">Đón</span></small>
-                            <small class="text-muted d-block"><i class="fa-solid fa-location-dot text-danger"></i> Đến: <span th:text="${trip.dropoffAddress}">Đến</span></small>
+                            <small class="text-muted d-block mb-1"><i class="fa-solid fa-circle-dot text-success me-1"></i> <strong>Đón:</strong> <span th:text="${trip.pickupAddress}">Đón</span></small>
+                            <small class="text-muted d-block mb-2"><i class="fa-solid fa-location-dot text-danger me-1"></i> <strong>Đến:</strong> <span th:text="${trip.dropoffAddress}">Đến</span></small>
+                            <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                                <small class="text-secondary"><i class="fa-regular fa-clock me-1"></i> Khởi hành: 2 giờ tới</small>
+                                <span class="fw-bold text-danger" th:text="${#numbers.formatDecimal(trip.costPerKm, 0, 'COMMA', 0, 'POINT')} + ' VNĐ/km'">Giá</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -99,6 +100,9 @@
         </div>
     </div>
 </div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/header :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

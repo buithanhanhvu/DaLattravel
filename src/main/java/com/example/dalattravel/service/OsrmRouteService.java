@@ -1,7 +1,7 @@
-package com.example.DaLattravel.service;
+package com.example.dalattravel.service;
 
-import com.example.DaLattravel.dto.OsrmLeg;
-import com.example.DaLattravel.dto.OsrmRouteResult;
+import com.example.dalattravel.dto.OsrmLeg;
+import com.example.dalattravel.dto.OsrmRouteResult;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;

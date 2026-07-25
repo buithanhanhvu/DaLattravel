@@ -1,4 +1,4 @@
-package com.example.DaLattravel.model;
+package com.example.dalattravel.model;
 
 public enum TripStatus {
     PENDING(0),

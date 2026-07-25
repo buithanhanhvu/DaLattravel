@@ -1,140 +1,208 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đà Lạt Travel - Lên Lịch Trình & Ghép Xe Đi Chung</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .hero-banner {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-            height: 450px;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .feature-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-radius: 12px;
-            border: none;
-        }
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-        }
-        .btn-gradient {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-            color: white;
-            border: none;
-            font-weight: 600;
-        }
-        .btn-gradient:hover {
-            background: linear-gradient(135deg, #0e8379, #2edb6e);
-            color: white;
-        }
-        .btn-carpool {
-            background: linear-gradient(135deg, #ff4b1f, #ff9068);
-            color: white;
-            border: none;
-            font-weight: 600;
-        }
-        .btn-carpool:hover {
-            background: linear-gradient(135deg, #e03e15, #f57f53);
-            color: white;
-        }
-    </style>
+<head th:replace="~{fragments/header :: head('Trang Chủ - Khám Phá Thành Phố Ngàn Hoa')}">
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-success fs-3" href="/">🌲 DaLatTravel</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto fs-6">
-                <li class="nav-item"><a class="nav-link active" href="/"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link" href="/trip-planner"><i class="fa-solid fa-route"></i> Lên lịch trình</a></li>
-                <li class="nav-item"><a class="nav-link" href="/carpool"><i class="fa-solid fa-car-side"></i> Ghép xe đi chung</a></li>
-                <li class="nav-item"><a class="nav-link" href="/tourist-places"><i class="fa-solid fa-mountain-sun"></i> Địa điểm</a></li>
-                <li class="nav-item"><a class="nav-link" href="/hotels"><i class="fa-solid fa-hotel"></i> Khách sạn</a></li>
-                <li class="nav-item"><a class="nav-link" href="/restaurants"><i class="fa-solid fa-utensils"></i> Nhà hàng</a></li>
-                <li class="nav-item"><a class="nav-link" href="/blog"><i class="fa-solid fa-blog"></i> Bài viết</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Liên hệ</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar('home')}"></nav>
 
-<div class="hero-banner">
-    <div class="container">
-        <h1 class="display-4 fw-bold mb-3">Khám Phá Thành Phố Ngàn Hoa Đà Lạt</h1>
-        <p class="lead mb-4">Hệ thống gợi ý lịch trình du lịch thông minh và kết nối ghép xe đi chung tối ưu chi phí.</p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="/trip-planner" class="btn btn-gradient btn-lg px-4 shadow"><i class="fa-solid fa-wand-magic-sparkles"></i> Lên Lịch Trình Tự Động</a>
-            <a href="/carpool" class="btn btn-carpool btn-lg px-4 shadow"><i class="fa-solid fa-taxi"></i> Ghép Xe Đi Chung</a>
+<!-- Hero Banner -->
+<div class="position-relative text-white py-5 mb-5 overflow-hidden" style="background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(27, 94, 32, 0.85)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat; min-height: 480px; display: flex; align-items: center;">
+    <div class="container text-center py-4">
+        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold mb-3 shadow-sm fs-6">
+            <i class="fa-solid fa-sparkles me-1"></i> Hệ Thống Du Lịch Đà Lạt Thông Minh 2026
+        </span>
+        <h1 class="display-3 fw-extrabold mb-3 text-white">Khám Phá Thành Phố Ngàn Hoa Đà Lạt</h1>
+        <p class="lead max-w-2xl mx-auto opacity-90 mb-4 fs-5" style="max-width: 750px;">
+            Tối ưu lộ trình du lịch tự động với thuật toán thông minh & Kết nối cộng đồng ghép xe đi chung tiết kiệm chi phí nhất.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="/trip-planner" class="btn btn-success btn-lg px-4 py-3 fw-bold rounded-pill shadow-lg fs-6">
+                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> Lên Lịch Trình Tự Động
+            </a>
+            <a href="/carpool" class="btn btn-warning text-dark btn-lg px-4 py-3 fw-bold rounded-pill shadow-lg fs-6">
+                <i class="fa-solid fa-car-side me-2"></i> Tìm Chuyến Xe Ghép
+            </a>
         </div>
     </div>
 </div>
 
-<div class="container py-5">
-    <h2 class="text-center fw-bold mb-4">Tính Năng Nổi Bật</h2>
-    <div class="row g-4">
+<!-- Main Content -->
+<div class="container mb-5">
+
+    <!-- Feature Cards -->
+    <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card h-100 p-4 shadow-sm feature-card text-center">
-                <div class="fs-1 text-success mb-3"><i class="fa-solid fa-brain"></i></div>
-                <h4 class="fw-bold">Lập Lịch Trình Thông Minh</h4>
-                <p class="text-muted">Ứng dụng thuật toán K-Means Clustering giúp tối ưu lộ trình tham quan theo khu vực địa lý và ngân sách của bạn.</p>
-                <a href="/trip-planner" class="btn btn-outline-success mt-auto">Trải nghiệm ngay &rarr;</a>
+            <div class="card card-custom h-100 p-4 text-center">
+                <div class="rounded-circle bg-success-subtle text-success p-3 mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-brain fs-2"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Lên Lịch Trình Tự Động</h4>
+                <p class="text-muted small">Thuật toán tối ưu tuyến đường TSP giúp bạn tiết kiệm 40% thời gian di chuyển giữa 30+ danh thắng Đà Lạt.</p>
+                <a href="/trip-planner" class="btn btn-outline-success rounded-pill fw-bold mt-auto align-self-center px-4">
+                    Tạo lịch trình &rarr;
+                </a>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card h-100 p-4 shadow-sm feature-card text-center">
-                <div class="fs-1 text-danger mb-3"><i class="fa-solid fa-car-side"></i></div>
-                <h4 class="fw-bold">Ghép Xe Tối Ưu Chi Phí</h4>
-                <p class="text-muted">Thuật toán Min-Cost Max-Flow & PDPTW kết nối xe và hành khách cùng tuyến đường, tiết kiệm chi phí tối đa.</p>
-                <a href="/carpool" class="btn btn-outline-danger mt-auto">Đăng ký ghép xe &rarr;</a>
+            <div class="card card-custom h-100 p-4 text-center">
+                <div class="rounded-circle bg-warning-subtle text-warning-emphasis p-3 mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-car-side fs-2"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Ghép Xe Tối Ưu Chi Phí</h4>
+                <p class="text-muted small">Kết nối tài xế và hành khách có cùng điểm đón/trả, chia sẻ chi phí di chuyển tuyến TPHCM - Đà Lạt - Sân Bay.</p>
+                <a href="/carpool" class="btn btn-outline-warning text-dark rounded-pill fw-bold mt-auto align-self-center px-4">
+                    Tìm chuyến xe &rarr;
+                </a>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card h-100 p-4 shadow-sm feature-card text-center">
-                <div class="fs-1 text-primary mb-3"><i class="fa-solid fa-map-location-dot"></i></div>
-                <h4 class="fw-bold">Bản Đồ Lộ Trình OSRM</h4>
-                <p class="text-muted">Tích hợp dịch vụ OSRM hiển thị polyline tuyến đường chính xác, tính toán khoảng cách và thời gian thực tế.</p>
-                <a href="/tourist-places" class="btn btn-outline-primary mt-auto">Xem địa điểm &rarr;</a>
+            <div class="card card-custom h-100 p-4 text-center">
+                <div class="rounded-circle bg-info-subtle text-info-emphasis p-3 mx-auto mb-3" style="width: 64px; height: 64px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-map-location-dot fs-2"></i>
+                </div>
+                <h4 class="fw-bold mb-2">Bản Đồ Real-time Leaflet</h4>
+                <p class="text-muted small">Hiển thị tọa độ Marker chính xác, chỉ đường Polyline trực quan giúp chuyến đi Đà Lạt của bạn luôn suôn sẻ.</p>
+                <a href="/tourist-places" class="btn btn-outline-info rounded-pill fw-bold mt-auto align-self-center px-4">
+                    Xem bản đồ &rarr;
+                </a>
             </div>
         </div>
     </div>
 
-    <div class="mt-5">
-        <h3 class="fw-bold mb-3"><i class="fa-solid fa-location-dot text-danger"></i> Địa Điểm Du Lịch Nổi Bật</h3>
-        <div class="row g-3">
-            <div class="col-md-4" th:each="place : ${touristPlaces}">
-                <div class="card h-100 shadow-sm border-0">
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold text-success" th:text="${place.name}">Tên địa điểm</h5>
-                        <p class="card-text text-muted" th:text="${place.description}">Mô tả</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-warning text-dark"><i class="fa-solid fa-star"></i> <span th:text="${place.rating}">5</span> / 5</span>
-                            <small class="text-muted" th:text="${place.id}">ID</small>
+    <!-- Section: Tourist Places -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge bg-success-subtle text-success fw-bold px-3 py-2 rounded-pill">🏔️ Khám Phá Đà Lạt</span>
+                <h2 class="fw-extrabold text-dark mt-2 mb-0">Địa Điểm Du Lịch Nổi Bật</h2>
+            </div>
+            <a href="/tourist-places" class="btn btn-link text-success fw-bold text-decoration-none">
+                Xem tất cả 50+ địa điểm <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4 col-sm-6" th:each="place : ${touristPlaces}">
+                <div class="card card-custom h-100">
+                    <img th:src="${place.imageUrl != null ? place.imageUrl : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80'}"
+                         class="card-custom-img" alt="Địa điểm du lịch Đà Lạt">
+                    <div class="card-body d-flex flex-column p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-success-subtle text-success border px-3 py-1 rounded-pill small"
+                                  th:text="${place.category != null ? place.category.name : 'Địa điểm'}">Danh mục</span>
+                            <span class="text-warning fw-bold small"><i class="fa-solid fa-star me-1"></i><span th:text="${place.rating}">5</span>/5</span>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-2" th:text="${place.name}">Tên địa điểm</h5>
+                        <p class="text-muted small mb-3 flex-grow-1" th:text="${place.description}">Mô tả ngắn</p>
+                        <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-auto">
+                            <span class="fw-bold text-danger small"
+                                  th:text="${place.ticketPrice != null and place.ticketPrice.compareTo(T(java.math.BigDecimal).ZERO) > 0} ? ${#numbers.formatDecimal(place.ticketPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ' : 'Miễn phí'">Giá vé</span>
+                            <a th:href="@{/trip-planner}" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold">Thêm vào lịch trình</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Section: Hotels & Resorts -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge bg-primary-subtle text-primary fw-bold px-3 py-2 rounded-pill">🏨 Nghỉ Dưỡng</span>
+                <h2 class="fw-extrabold text-dark mt-2 mb-0">Khách Sạn & Homestay Đẹp Nhất</h2>
+            </div>
+            <a href="/hotels" class="btn btn-link text-primary fw-bold text-decoration-none">
+                Xem tất cả khách sạn <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4 col-sm-6" th:each="hotel : ${hotels}">
+                <div class="card card-custom h-100">
+                    <img th:src="${hotel.imageUrl != null ? hotel.imageUrl : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600&q=80'}"
+                         class="card-custom-img" alt="Khách sạn Đà Lạt">
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="fw-bold text-dark mb-2" th:text="${hotel.name}">Tên khách sạn</h5>
+                        <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot text-danger me-1"></i><span th:text="${hotel.address}">Địa chỉ</span></p>
+                        <p class="text-muted small mb-3"><i class="fa-solid fa-phone text-success me-1"></i><span th:text="${hotel.phone}">SĐT</span></p>
+                        <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-auto">
+                            <span class="fw-bold text-success fs-6" th:text="${#numbers.formatDecimal(hotel.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ/đêm'">Giá</span>
+                            <a href="/hotels" class="btn btn-sm btn-success rounded-pill px-3 fw-bold">Chi tiết</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Restaurants -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge bg-warning-subtle text-warning-emphasis fw-bold px-3 py-2 rounded-pill">🍜 Ẩm Thực Cao Nguyên</span>
+                <h2 class="fw-extrabold text-dark mt-2 mb-0">Quán Ăn & Đặc Sản Đà Lạt</h2>
+            </div>
+            <a href="/restaurants" class="btn btn-link text-warning-emphasis fw-bold text-decoration-none">
+                Xem danh sách quán ăn <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4 col-sm-6" th:each="r : ${restaurants}">
+                <div class="card card-custom h-100">
+                    <img th:src="${r.imageUrl != null ? r.imageUrl : 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80'}"
+                         class="card-custom-img" alt="Nhà hàng Đà Lạt">
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="fw-bold text-dark mb-2" th:text="${r.name}">Tên quán</h5>
+                        <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot text-danger me-1"></i><span th:text="${r.address}">Địa chỉ</span></p>
+                        <p class="text-muted small mb-3"><i class="fa-solid fa-phone text-success me-1"></i><span th:text="${r.phone}">SĐT</span></p>
+                        <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-auto">
+                            <span class="fw-bold text-warning-emphasis fs-6" th:text="${#numbers.formatDecimal(r.averagePricePerPerson, 0, 'COMMA', 0, 'POINT')} + ' VNĐ/người'">Giá</span>
+                            <a href="/restaurants" class="btn btn-sm btn-outline-warning text-dark rounded-pill px-3 fw-bold">Khám phá</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section: Blog Posts -->
+    <div class="mb-5">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <span class="badge bg-info-subtle text-info-emphasis fw-bold px-3 py-2 rounded-pill">📝 Cẩm Nang Du Lịch</span>
+                <h2 class="fw-extrabold text-dark mt-2 mb-0">Bài Viết & Kinh Nghiệm Khám Phá</h2>
+            </div>
+            <a href="/blog" class="btn btn-link text-info-emphasis fw-bold text-decoration-none">
+                Đọc thêm bài viết <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6" th:each="post : ${blogPosts}">
+                <div class="card card-custom h-100 d-flex flex-row flex-wrap flex-md-nowrap overflow-hidden">
+                    <img th:src="${post.imageUrl != null ? post.imageUrl : 'https://images.unsplash.com/photo-1511497584788-8767611136f6?auto=format&fit=crop&w=600&q=80'}"
+                         style="width: 220px; object-fit: cover;" alt="Bài viết du lịch">
+                    <div class="p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <span class="badge bg-secondary-subtle text-secondary small mb-2"><i class="fa-regular fa-user me-1"></i><span th:text="${post.author}">Admin</span></span>
+                            <h5 class="fw-bold text-dark mb-2" th:text="${post.title}">Tiêu đề bài viết</h5>
+                            <p class="text-muted small mb-3" th:text="${post.content}">Nội dung tóm tắt</p>
+                        </div>
+                        <a href="/blog" class="text-success fw-bold small text-decoration-none">Đọc chi tiết &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
-<footer class="bg-dark text-light py-4 mt-5 text-center">
-    <div class="container">
-        <p class="mb-1">&copy; 2026 Đà Lạt Travel System - Spring Boot Porting Complete.</p>
-        <small class="text-secondary">Dự án Lên lịch trình du lịch Đà Lạt & Ghép xe đi chung.</small>
-    </div>
-</footer>
+<!-- Footer -->
+<footer th:replace="~{fragments/header :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

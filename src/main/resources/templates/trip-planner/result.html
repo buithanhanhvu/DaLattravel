@@ -2,45 +2,337 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Kết Quả Lịch Trình - DaLatTravel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết Quả Gợi Ý Lịch Trình Tối Ưu - DaLatTravel</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+        }
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+        }
+        .card-custom {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            background: #ffffff;
+        }
+        #resultRouteMap {
+            height: 480px;
+            border-radius: 16px;
+        }
+        .nav-pills-tier .nav-link {
+            border-radius: 14px;
+            padding: 14px 24px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #495057;
+            background-color: #ffffff;
+            border: 2px solid #e9ecef;
+            transition: all 0.25s ease;
+        }
+        .nav-pills-tier .nav-link.active {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: #ffffff;
+            border-color: #1b5e20;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.25);
+        }
+        .timeline-container {
+            border-left: 3px solid #a5d6a7;
+            padding-left: 24px;
+            margin-left: 12px;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 4px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #2e7d32;
+            border: 3px solid #e8f5e9;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-success fs-3" href="/">🌲 DaLatTravel</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/trip-planner">Lên lịch trình</a></li>
-                <li class="nav-item"><a class="nav-link" href="/carpool">Ghép xe đi chung</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/header :: navbar('trip-planner')}"></nav>
 
-<div class="container py-5">
-    <h2 class="fw-bold text-success mb-4"><i class="fa-solid fa-map-location-dot"></i> Kế Hoạch Lịch Trình Gợi Ý Tối Ưu</h2>
-
-    <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body">
-            <h5 class="fw-bold mb-3"><i class="fa-solid fa-lightbulb text-warning"></i> Gợi Ý & Phân Tích Lộ Trình</h5>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item" th:each="s : ${model.suggestions}">
-                    <i class="fa-solid fa-check text-success me-2"></i> <span th:text="${s}">Gợi ý</span>
-                </li>
-            </ul>
+    <!-- Header Section -->
+    <div class="bg-success bg-gradient text-white py-4 mb-4">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
+                <div>
+                    <h2 class="fw-bold mb-1"><i class="fa-solid fa-square-poll-vertical me-2"></i>3 Phương Án Lịch Trình Gợi Ý Tối Ưu</h2>
+                    <p class="mb-0 opacity-90">
+                        Ngân sách của bạn: <strong th:text="${#numbers.formatDecimal(planResult.userBudget, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">5,000,000 VNĐ</strong> | 
+                        Thời gian: <strong th:text="${planResult.requestedDays} + ' Ngày'">3 Ngày</strong> | 
+                        Điểm xuất phát: <strong th:text="${planResult.startLocationName}">Đà Lạt</strong>
+                    </p>
+                </div>
+                <a href="/trip-planner" class="btn btn-light text-success fw-bold rounded-pill px-4 mt-2 mt-md-0">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Chỉnh sửa yêu cầu
+                </a>
+            </div>
         </div>
     </div>
 
-    <div class="text-center mt-4">
-        <a href="/trip-planner" class="btn btn-outline-success btn-lg px-4"><i class="fa-solid fa-arrow-left"></i> Tạo Lịch Trình Khác</a>
-        <a href="/carpool" class="btn btn-danger btn-lg px-4 ms-2"><i class="fa-solid fa-car-side"></i> Đăng Ký Ghép Xe Đến Các Điểm Trên</a>
-    </div>
-</div>
+    <!-- Main Content -->
+    <div class="container mb-5" th:if="${planResult != null}">
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Budget Warning -->
+        <div class="alert alert-warning border-0 rounded-3 shadow-sm mb-4 d-flex align-items-center gap-3"
+             th:if="${planResult.budgetWarning != null and !planResult.budgetWarning.isEmpty()}">
+            <i class="fa-solid fa-triangle-exclamation fa-2x text-warning"></i>
+            <div>
+                <strong>Lưu ý ngân sách:</strong>
+                <span th:text="${planResult.budgetWarning}">Canh bao</span>
+            </div>
+        </div>
+
+        <!-- Tier Tabs Switcher -->
+        <ul class="nav nav-pills nav-pills-tier nav-justified gap-3 mb-4" id="tierTabs" role="tablist">
+            <li class="nav-item" role="presentation" th:each="plan, stat : ${planResult.plans}">
+                <button class="nav-link" th:classappend="${stat.first} ? 'active' : ''" 
+                        th:id="${'tab-' + plan.tierType}" 
+                        data-bs-toggle="pill" 
+                        th:data-bs-target="${'#pane-' + plan.tierType}" 
+                        type="button" 
+                        role="tab"
+                        th:data-tier="${plan.tierType}"
+                        onclick="switchTierMap(this.getAttribute('data-tier'))">
+                    <span th:text="${plan.tierTitle}">Phương án</span>
+                    <span class="d-block small text-opacity-75 mt-1" th:text="${#numbers.formatDecimal(plan.totalCost, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">3,000,000 VNĐ</span>
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content Panes -->
+        <div class="tab-content" id="tierTabsContent">
+            <div class="tab-pane fade" th:each="plan, stat : ${planResult.plans}" 
+                 th:classappend="${stat.first} ? 'show active' : ''" 
+                 th:id="${'pane-' + plan.tierType}" 
+                 role="tabpanel">
+
+                <div class="row g-4">
+                    <!-- Left Column: Cost Breakdown & Recommendation -->
+                    <div class="col-lg-5">
+                        <div class="card card-custom p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge px-3 py-2 rounded-pill fs-6" th:classappend="${plan.badgeClass}" th:text="${plan.tierTitle}">Tiết kiệm</span>
+                                <span th:if="${plan.isRecommended}" class="badge bg-success px-3 py-2 rounded-pill shadow-sm">
+                                    <i class="fa-solid fa-thumbs-up me-1"></i> Khuyên dùng cho bạn
+                                </span>
+                            </div>
+
+                            <h3 class="fw-bold text-success mb-3" th:text="${#numbers.formatDecimal(plan.totalCost, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Tổng Chi Phí</h3>
+                            <p class="text-muted small border-bottom pb-3 mb-3" th:text="${plan.recommendationNote}">Gợi ý phù hợp ngân sách</p>
+
+                            <!-- Cost Breakdown Table -->
+                            <h6 class="fw-bold text-dark mb-3"><i class="fa-solid fa-calculator me-2"></i>Bảng Chi Phí Dự Toán Chi Tiết:</h6>
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+                                    <span><i class="fa-solid fa-car text-primary me-2"></i> Phương tiện (<span th:text="${plan.transportName}">Xe máy</span>):</span>
+                                    <strong th:text="${#numbers.formatDecimal(plan.transportCost, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">150,000 VNĐ</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+                                    <span><i class="fa-solid fa-utensils text-warning me-2"></i> Ăn uống ước tính:</span>
+                                    <strong th:text="${#numbers.formatDecimal(plan.foodCost, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">360,000 VNĐ</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+                                    <span><i class="fa-solid fa-hotel text-info me-2"></i> Chỗ ở (<span th:text="${plan.accommodationType}">Homestay</span>):</span>
+                                    <strong th:text="${#numbers.formatDecimal(plan.accommodationCost, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">400,000 VNĐ</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0">
+                                    <span><i class="fa-solid fa-ticket text-danger me-2"></i> Vé tham quan ước tính:</span>
+                                    <strong th:text="${#numbers.formatDecimal(plan.ticketCost, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">100,000 VNĐ</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0" th:if="${plan.contingencyCost != null}">
+                                    <span><i class="fa-solid fa-shield-halved text-secondary me-2"></i> Dự phòng / Mua sắm (10%):</span>
+                                    <strong th:text="${#numbers.formatDecimal(plan.contingencyCost, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">300,000 VNĐ</strong>
+                                </li>
+                            </ul>
+
+                            <div class="p-3 bg-light rounded-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold"><i class="fa-solid fa-road me-1 text-success"></i> Tổng quãng đường:</span>
+                                    <strong class="text-success fs-5" th:text="${plan.totalDistanceKm} + ' km'">45.2 km</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card card-custom p-4">
+                            <h5 class="fw-bold text-success mb-3"><i class="fa-solid fa-handshake me-2"></i>Đăng Ký Ghép Xe Ngay</h5>
+                            <p class="text-muted small">Tiết kiệm thêm chi phí di chuyển bằng cách kết nối ghép xe đi chung đến Đà Lạt.</p>
+                            <a href="/carpool" class="btn btn-outline-success w-100 rounded-pill fw-bold py-2">
+                                <i class="fa-solid fa-car-side me-1"></i> Tìm Chuyến Xe Ghép Phù Hợp
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Polyline Route Map & Detailed Timeline -->
+                    <div class="col-lg-7">
+                        <!-- Route Map -->
+                        <div class="card card-custom p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold text-success mb-0"><i class="fa-solid fa-map-location-dot me-2"></i>Tuyến Đường Lộ Trình Tối Ưu</h5>
+                                <span class="badge bg-success-subtle text-success border px-3 py-2 rounded-pill small">
+                                    Leaflet TSP Route Polyline
+                                </span>
+                            </div>
+                            <div th:id="${'map-' + plan.tierType}" class="resultRouteMap" style="height: 380px; border-radius: 12px;"></div>
+                        </div>
+
+                        <!-- Day-by-Day Timeline -->
+                        <div class="card card-custom p-4">
+                            <h4 class="fw-bold text-success mb-4"><i class="fa-solid fa-clock-rotate-left me-2"></i>Lịch Trình Chi Tiết Theo Ngày</h4>
+
+                            <div class="mb-4" th:each="day : ${plan.days}">
+                                <!-- Day header with per-day transport cost -->
+                                <div class="bg-success text-white px-3 py-2 rounded-3 fw-bold mb-1 d-flex align-items-center justify-content-between">
+                                    <span><i class="fa-solid fa-calendar-day me-2"></i><span th:text="${day.title}">Ngày 1</span></span>
+                                    <span class="small opacity-90" th:if="${day.dailyKm > 0}">
+                                        <i class="fa-solid fa-car me-1"></i>
+                                        <span th:text="${day.dailyKm} + ' km'">12km</span>
+                                    </span>
+                                </div>
+                                <!-- Per-day transport + food cost summary bar -->
+                                <div class="d-flex gap-2 mb-3 flex-wrap" th:if="${day.dailyTransportCost != null}">
+                                    <span class="badge bg-primary-subtle text-primary border px-3 py-2 rounded-pill small">
+                                        <i class="fa-solid fa-car me-1"></i>
+                                        Di chuyển: <strong th:text="${#numbers.formatDecimal(day.dailyTransportCost, 0, 'COMMA', 0, 'POINT')} + 'đ'">35,000đ</strong>
+                                    </span>
+                                    <span class="badge bg-warning-subtle text-warning-emphasis border px-3 py-2 rounded-pill small" th:if="${day.dailyFoodCost != null}">
+                                        <i class="fa-solid fa-utensils me-1"></i>
+                                        An uong: <strong th:text="${#numbers.formatDecimal(day.dailyFoodCost, 0, 'COMMA', 0, 'POINT')} + 'đ'">240,000đ</strong>
+                                    </span>
+                                </div>
+
+                                <div class="timeline-container">
+                                    <div class="timeline-item" th:each="item : ${day.items}">
+                                        <div class="bg-white p-3 rounded-3 shadow-sm border">
+                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                <span class="badge bg-light text-dark border fw-semibold">
+                                                    <i class="fa-regular fa-clock me-1 text-success"></i><span th:text="${item.time}">08:00</span>
+                                                </span>
+                                                <div class="d-flex gap-2 align-items-center">
+                                                    <span class="badge bg-success-subtle text-success border small"
+                                                          th:if="${item.costEstimate != null and item.costEstimate.compareTo(T(java.math.BigDecimal).ZERO) > 0}"
+                                                          th:text="${#numbers.formatDecimal(item.costEstimate, 0, 'COMMA', 0, 'POINT')} + 'đ'">50,000đ</span>
+                                                    <small class="text-muted" th:if="${item.locationName != null}">
+                                                        <i class="fa-solid fa-location-dot text-danger me-1"></i><span th:text="${item.locationName}">Dia diem</span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            <h6 class="fw-bold text-dark mb-1" th:text="${item.activity}">Hoat dong</h6>
+                                            <p class="text-muted small mb-0" th:text="${item.note}">Ghi chu</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/header :: footer}"></footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const planResultData = JSON.parse(/*[[${planResultJson}]]*/ '{}');
+        const leafletMaps = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (planResultData && planResultData.plans) {
+                planResultData.plans.forEach(plan => {
+                    initPlanMap(plan);
+                });
+            }
+        });
+
+        function initPlanMap(plan) {
+            const mapContainerId = 'map-' + plan.tierType;
+            const containerEl = document.getElementById(mapContainerId);
+            if (!containerEl) return;
+
+            const map = L.map(mapContainerId).setView([planResultData.startLatitude || 11.9404, planResultData.startLongitude || 108.4583], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            leafletMaps[plan.tierType] = map;
+
+            const latlngs = [];
+            const waypoints = plan.routeWaypoints || [];
+
+            waypoints.forEach((wp, index) => {
+                latlngs.push([wp.latitude, wp.longitude]);
+
+                let iconUrl = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png';
+                if (index === 0) {
+                    iconUrl = 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png';
+                }
+
+                const customIcon = L.icon({
+                    iconUrl: iconUrl,
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                });
+
+                L.marker([wp.latitude, wp.longitude], {icon: customIcon})
+                    .addTo(map)
+                    .bindPopup(`<b>${index === 0 ? '📍 Bắt đầu' : 'Bước ' + index}: ${wp.name}</b>`);
+            });
+
+            // Draw Polyline path connecting optimal waypoints
+            if (latlngs.length > 1) {
+                const polyline = L.polyline(latlngs, {
+                    color: plan.tierType === 'tiet_kiem' ? '#2e7d32' : (plan.tierType === 'can_bang' ? '#0d6efd' : '#ff9800'),
+                    weight: 5,
+                    opacity: 0.85,
+                    dashArray: '8, 8'
+                }).addTo(map);
+
+                map.fitBounds(polyline.getBounds(), {padding: [40, 40]});
+            }
+        }
+
+        function switchTierMap(tierType) {
+            setTimeout(() => {
+                if (leafletMaps[tierType]) {
+                    leafletMaps[tierType].invalidateSize();
+                }
+            }, 200);
+        }
+        /*]]>*/
+    </script>
 </body>
 </html>

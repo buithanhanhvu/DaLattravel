@@ -2,91 +2,441 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lên Lịch Trình Du Lịch Đà Lạt - DaLatTravel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lên Lịch Trình Du Lịch Đà Lạt Tự Động - DaLatTravel</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-dark: #1b5e20;
+            --accent-color: #ff9800;
+        }
+        body {
+            background-color: #f4f6f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar-custom {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+        }
+        .hero-mini {
+            background: linear-gradient(rgba(27, 94, 32, 0.85), rgba(46, 125, 50, 0.85)), url('/images/banner.jpg') center/cover;
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 24px 24px;
+        }
+        .card-custom {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            background: #ffffff;
+        }
+        #interactiveMap {
+            height: 480px;
+            border-radius: 16px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+        .badge-selected-place {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+            font-size: 0.95rem;
+            padding: 8px 14px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 4px;
+            transition: all 0.2s;
+        }
+        .badge-selected-place:hover {
+            background-color: #c8e6c9;
+        }
+        .place-item-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background: #fff;
+        }
+        .place-item-card:hover {
+            border-color: #2e7d32;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.15);
+        }
+        .place-item-card.selected {
+            background-color: #e8f5e9;
+            border-color: #2e7d32;
+        }
+        .cat-pill {
+            cursor: pointer;
+            border-radius: 20px;
+            padding: 6px 16px;
+            border: 1px solid #c8e6c9;
+            background: #fff;
+            color: #2e7d32;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .cat-pill.active, .cat-pill:hover {
+            background: #2e7d32;
+            color: #fff;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-success fs-3" href="/">🌲 DaLatTravel</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
-                <li class="nav-item"><a class="nav-link active" href="/trip-planner">Lên lịch trình</a></li>
-                <li class="nav-item"><a class="nav-link" href="/carpool">Ghép xe đi chung</a></li>
-            </ul>
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/header :: navbar('trip-planner')}"></nav>
+
+    <!-- Mini Hero -->
+    <div class="hero-mini text-center mb-4">
+        <div class="container">
+            <h2 class="fw-bold mb-2"><i class="fa-solid fa-wand-magic-sparkles text-warning me-2"></i>Công Cụ Lên Lịch Trình Du Lịch Tự Động</h2>
+            <p class="lead mb-0">Tối ưu tuyến đường ngắn nhất & Tự động tạo 3 phương án Ngân sách (Tiết kiệm - Cân bằng - Cao cấp)</p>
         </div>
     </div>
-</nav>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow-lg border-0 rounded-4">
-                <div class="card-header bg-success text-white p-4 rounded-top-4">
-                    <h3 class="mb-0 fw-bold"><i class="fa-solid fa-route"></i> Thùng Công Cụ Lên Lịch Trình Tự Động</h3>
-                    <p class="mb-0 text-white-50">Nhập ngân sách và yêu cầu của bạn để hệ thống tự động tối ưu lộ trình.</p>
-                </div>
-                <div class="card-body p-4">
+    <!-- Main Content Form -->
+    <div class="container mb-5">
+        <form id="tripPlannerForm" th:action="@{/trip-planner}" method="post" th:object="${model}">
+            
+            <!-- Hidden Input for selected tourist place IDs -->
+            <div id="hiddenSelectedPlaceInputs"></div>
+            <input type="hidden" id="startLatitude" name="startLatitude" th:value="${model.startLatitude}" />
+            <input type="hidden" id="startLongitude" name="startLongitude" th:value="${model.startLongitude}" />
 
-                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
-
-                    <form th:action="@{/trip-planner}" method="post" th:object="${model}">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Ngân sách dự kiến (VNĐ):</label>
-                            <input type="number" class="form-control form-control-lg" th:field="*{budget}" placeholder="Ví dụ: 3000000" required />
-                        </div>
-
-                        <div class="row mb-3">
+            <div class="row g-4">
+                <!-- Left Column: Parameters & Destination Selection -->
+                <div class="col-lg-6">
+                    <div class="card card-custom p-4 mb-4">
+                        <h4 class="fw-bold text-success mb-3"><i class="fa-solid fa-sliders me-2"></i>1. Thông Tin Chuyến Đi</h4>
+                        
+                        <div class="row g-3">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Số ngày du lịch:</label>
-                                <input type="number" class="form-control" th:field="*{numberOfDays}" min="1" max="30" value="3" required />
+                                <label class="form-label fw-bold"><i class="fa-solid fa-wallet text-success me-1"></i> Ngân sách dự kiến (VNĐ):</label>
+                                <input type="number" class="form-control form-control-lg" name="budget" th:value="${model.budget}" min="100000" required placeholder="Ví dụ: 5000000">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Chọn phương tiện di chuyển:</label>
-                                <select class="form-select" th:field="*{selectedTransportId}">
-                                    <option value="">-- Chọn phương tiện --</option>
-                                    <option th:each="t : *{transportOptions}" th:value="${t.id}" th:text="${t.name}"></option>
+                                <label class="form-label fw-bold"><i class="fa-solid fa-calendar-days text-success me-1"></i> Số ngày du lịch:</label>
+                                <input type="number" class="form-control form-control-lg" name="numberOfDays" th:value="${model.numberOfDays}" min="1" max="14" required placeholder="Số ngày (VD: 3)">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold"><i class="fa-solid fa-car text-success me-1"></i> Phương tiện di chuyển:</label>
+                                <select class="form-select form-select-lg" name="transportType">
+                                    <option value="">-- Tự động đề xuất theo ngân sách --</option>
+                                    <option value="Xe máy">Xe máy tự lái (Tiết kiệm)</option>
+                                    <option value="Ô tô 4 chỗ">Ô tô 4 chỗ (Gia đình)</option>
+                                    <option value="Ô tô 7 chỗ VIP">Ô tô 7 chỗ VIP + Tài xế</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Vĩ độ điểm bắt đầu (Latitude):</label>
-                                <input type="number" step="any" class="form-control" th:field="*{startLatitude}" placeholder="10.8142" />
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold">Kinh độ điểm bắt đầu (Longitude):</label>
-                                <input type="number" step="any" class="form-control" th:field="*{startLongitude}" placeholder="106.7118" />
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Chọn các địa điểm muốn tham quan (Tùy chọn):</label>
-                            <div class="row g-2" style="max-height: 200px; overflow-y: auto;">
-                                <div class="col-md-6" th:each="place : *{touristPlaces}">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" th:value="${place.id}" th:field="*{selectedTouristPlaceIds}" />
-                                        <label class="form-check-label" th:text="${place.name}"></label>
-                                    </div>
+                            <div class="col-12">
+                                <label class="form-label fw-bold"><i class="fa-solid fa-location-dot text-danger me-1"></i> Điểm bắt đầu xuất phát:</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control form-control-lg" id="startLocationInput" name="startLocation" th:value="${model.startLocation}" placeholder="Ví dụ: Bến xe Đà Lạt / Khách sạn trung tâm">
+                                    <button class="btn btn-outline-success" type="button" id="btnGetCurrentLocation">
+                                        <i class="fa-solid fa-crosshairs me-1"></i> Lấy vị trí hiện tại
+                                    </button>
                                 </div>
+                                <small class="text-muted" id="geoStatus">Nhấp nút để tự động lấy tọa độ GPS từ trình duyệt của bạn.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Destination Multi-select Dropdown & List -->
+                    <div class="card card-custom p-4">
+                        <h4 class="fw-bold text-success mb-2"><i class="fa-solid fa-map-pin me-2"></i>2. Chọn Các Nơi Muốn Đến</h4>
+                        <p class="text-muted small mb-3">Chọn các điểm du lịch bạn yêu thích. Hệ thống sẽ tối ưu hóa tuyến đường ngắn nhất giữa các điểm.</p>
+
+                        <!-- Selected Badges Area -->
+                        <div class="mb-3 p-3 bg-light rounded-3 border">
+                            <span class="fw-bold d-block mb-2 text-dark"><i class="fa-solid fa-list-check me-1"></i> Các địa điểm đã chọn (<span id="selectedCount">0</span>):</span>
+                            <div id="selectedBadgesContainer" class="d-flex flex-wrap">
+                                <span class="text-muted small italic">Chưa chọn địa điểm nào. Hãy bấm chọn bên dưới!</span>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i> Tạo Lịch Trình Tối Ưu
-                        </button>
-                    </form>
+                        <!-- Category Filter Pills - Hardcoded to avoid DB encoding issues -->
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="cat-pill active" data-cat="all">Tất cả</span>
+                            <span class="cat-pill" data-cat="1">🏨 Khách sạn</span>
+                            <span class="cat-pill" data-cat="2">🍜 Nhà hàng/Quán ăn</span>
+                            <span class="cat-pill" data-cat="3">🏔️ Địa điểm du lịch</span>
+                        </div>
 
+                        <!-- Search Filter Box -->
+                        <div class="input-group mb-3">
+                            <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" class="form-control" id="searchPlaceInput"
+                                   placeholder="Tìm kiếm địa điểm (Hồ Xuân Hương, Thung Lũng Tình Yêu...)..."
+                                   oninput="filterPlaces()">
+                        </div>
+
+                        <!-- Place Item Cards Container -->
+                        <div id="placeCardsList" style="max-height: 280px; overflow-y: auto;">
+                            <!-- Dynamically generated via JavaScript from touristPlacesJson -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Interactive Real-time Map & Submit Button -->
+                <div class="col-lg-6">
+                    <div class="card card-custom p-4 h-100 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="fw-bold text-success mb-0"><i class="fa-solid fa-map me-2"></i>Bản Đồ Tuyến Đường Real-time</h4>
+                                <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill small">
+                                    <i class="fa-solid fa-circle text-success me-1 small"></i> Leaflet OpenStreetMap
+                                </span>
+                            </div>
+                            <!-- Map Container -->
+                            <div id="interactiveMap"></div>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-top">
+                            <button type="submit" class="btn btn-success btn-lg w-100 py-3 fw-bold fs-5 shadow rounded-pill">
+                                <i class="fa-solid fa-wand-magic-sparkles me-2"></i> BẮT ĐẦU TẠO LỊCH TRÌNH TỐI ƯU
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Footer -->
+    <footer th:replace="~{fragments/header :: footer}"></footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const allPlaces = JSON.parse(/*[[${touristPlacesJson}]]*/ '[]');
+        let selectedPlaceIds = new Set(['TP001', 'TP002']); // default selected
+        let map, startMarker;
+        let placeMarkers = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initMap();
+            renderPlaceCards();
+            renderSelectedBadges();
+            updateMapMarkers();
+
+            // Category filter pills
+            document.querySelectorAll('.cat-pill').forEach(pill => {
+                pill.addEventListener('click', function() {
+                    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+                    this.classList.add('active');
+                    filterPlaces();
+                });
+            });
+
+            // Search filter
+            document.getElementById('searchPlaceInput').addEventListener('input', filterPlaces);
+
+            // Geolocation Button
+            document.getElementById('btnGetCurrentLocation').addEventListener('click', getCurrentLocation);
+        });
+
+        function initMap() {
+            const defaultLat = parseFloat(document.getElementById('startLatitude').value) || 11.9404;
+            const defaultLng = parseFloat(document.getElementById('startLongitude').value) || 108.4583;
+
+            map = L.map('interactiveMap').setView([defaultLat, defaultLng], 12);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Custom Start Marker Icon
+            const startIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            startMarker = L.marker([defaultLat, defaultLng], {icon: startIcon, draggable: true}).addTo(map)
+                .bindPopup("<b>📍 Điểm xuất phát của bạn</b>").openPopup();
+
+            startMarker.on('dragend', function(e) {
+                const coord = e.target.getLatLng();
+                document.getElementById('startLatitude').value = coord.lat.toFixed(6);
+                document.getElementById('startLongitude').value = coord.lng.toFixed(6);
+                document.getElementById('geoStatus').innerText = `Đã cập nhật tọa độ: ${coord.lat.toFixed(4)}, ${coord.lng.toFixed(4)}`;
+            });
+        }
+
+        function renderPlaceCards() {
+            const container = document.getElementById('placeCardsList');
+            container.innerHTML = '';
+
+            allPlaces.forEach(place => {
+                const isSelected = selectedPlaceIds.has(place.id);
+                const card = document.createElement('div');
+                card.className = `place-item-card d-flex justify-content-between align-items-center ${isSelected ? 'selected' : ''}`;
+                card.dataset.id = place.id;
+                card.dataset.cat = place.categoryId;
+                card.dataset.name = place.name.toLowerCase();
+
+                card.innerHTML = `
+                    <div>
+                        <span class="fw-bold d-block text-dark">${place.name}</span>
+                        <span class="badge bg-secondary-subtle text-secondary small me-2">${place.categoryName || 'Địa điểm'}</span>
+                        <span class="text-warning small"><i class="fa-solid fa-star me-1"></i>${place.rating || 5}/5</span>
+                    </div>
+                    <button type="button" class="btn btn-sm ${isSelected ? 'btn-danger' : 'btn-outline-success'} rounded-pill">
+                        ${isSelected ? '<i class="fa-solid fa-minus me-1"></i> Bỏ' : '<i class="fa-solid fa-plus me-1"></i> Chọn'}
+                    </button>
+                `;
+
+                card.addEventListener('click', function() {
+                    togglePlaceSelection(place.id);
+                });
+
+                container.appendChild(card);
+            });
+        }
+
+        function togglePlaceSelection(id) {
+            if (selectedPlaceIds.has(id)) {
+                selectedPlaceIds.delete(id);
+            } else {
+                selectedPlaceIds.add(id);
+            }
+            renderPlaceCards();
+            renderSelectedBadges();
+            updateMapMarkers();
+        }
+
+        function renderSelectedBadges() {
+            const container = document.getElementById('selectedBadgesContainer');
+            const hiddenInputsContainer = document.getElementById('hiddenSelectedPlaceInputs');
+            document.getElementById('selectedCount').innerText = selectedPlaceIds.size;
+
+            container.innerHTML = '';
+            hiddenInputsContainer.innerHTML = '';
+
+            if (selectedPlaceIds.size === 0) {
+                container.innerHTML = '<span class="text-muted small italic">Chưa chọn địa điểm nào. Hãy bấm chọn bên dưới!</span>';
+                return;
+            }
+
+            selectedPlaceIds.forEach(id => {
+                const place = allPlaces.find(p => p.id === id);
+                if (place) {
+                    const badge = document.createElement('span');
+                    badge.className = 'badge-selected-place';
+                    badge.innerHTML = `
+                        <i class="fa-solid fa-location-dot text-success"></i> ${place.name}
+                        <i class="fa-solid fa-xmark text-danger cursor-pointer ms-1" onclick="event.stopPropagation(); togglePlaceSelection('${place.id}')"></i>
+                    `;
+                    container.appendChild(badge);
+
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'selectedTouristPlaceIds';
+                    hiddenInput.value = place.id;
+                    hiddenInputsContainer.appendChild(hiddenInput);
+                }
+            });
+        }
+
+        function updateMapMarkers() {
+            // Clear existing place markers
+            Object.values(placeMarkers).forEach(marker => map.removeLayer(marker));
+            placeMarkers = {};
+
+            const greenIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            const bounds = [];
+            const startLat = parseFloat(document.getElementById('startLatitude').value) || 11.9404;
+            const startLng = parseFloat(document.getElementById('startLongitude').value) || 108.4583;
+            bounds.push([startLat, startLng]);
+
+            selectedPlaceIds.forEach(id => {
+                const place = allPlaces.find(p => p.id === id);
+                if (place && place.latitude && place.longitude) {
+                    const marker = L.marker([place.latitude, place.longitude], {icon: greenIcon})
+                        .bindPopup(`<b>🏞️ ${place.name}</b><br><small>${place.description || ''}</small>`);
+                    marker.addTo(map);
+                    placeMarkers[id] = marker;
+                    bounds.push([place.latitude, place.longitude]);
+                }
+            });
+
+            if (bounds.length > 1) {
+                map.fitBounds(bounds, {padding: [50, 50]});
+            }
+        }
+
+        function removeVietnameseAccents(str) {
+            return str ? str.normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd').replace(/Đ/g, 'D') : '';
+        }
+
+        function filterPlaces() {
+            const activeCatEl = document.querySelector('.cat-pill.active');
+            const activeCat = activeCatEl ? activeCatEl.dataset.cat : 'all';
+            const rawQuery = document.getElementById('searchPlaceInput').value.toLowerCase().trim();
+            const cleanQuery = removeVietnameseAccents(rawQuery);
+
+            document.querySelectorAll('.place-item-card').forEach(card => {
+                const matchesCat = activeCat === 'all' || card.dataset.cat == activeCat;
+                const nameRaw = card.dataset.name || '';
+                const nameClean = removeVietnameseAccents(nameRaw.toLowerCase());
+                const matchesSearch = !rawQuery || nameRaw.toLowerCase().includes(rawQuery) || nameClean.includes(cleanQuery);
+
+                if (matchesCat && matchesSearch) {
+                    card.classList.remove('d-none');
+                } else {
+                    card.classList.add('d-none');
+                }
+            });
+        }
+
+        function getCurrentLocation() {
+            const status = document.getElementById('geoStatus');
+            const inputLocation = document.getElementById('startLocationInput');
+            if (navigator.geolocation) {
+                status.innerText = "Đang xác định vị trí GPS...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        document.getElementById('startLatitude').value = lat.toFixed(6);
+                        document.getElementById('startLongitude').value = lng.toFixed(6);
+                        inputLocation.value = `Vị trí GPS hiện tại (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+                        status.innerText = `Đã định vị GPS thành công! (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
+
+                        if (startMarker) {
+                            startMarker.setLatLng([lat, lng]);
+                            map.setView([lat, lng], 13);
+                        }
+                    },
+                    (error) => {
+                        status.innerText = "Không thể định vị GPS tự động. Hệ thống sử dụng vị trí mặc định Đà Lạt.";
+                    }
+                );
+            } else {
+                status.innerText = "Trình duyệt không hỗ trợ Geolocation API.";
+            }
+        }
+        /*]]>*/
+    </script>
 </body>
 </html>
