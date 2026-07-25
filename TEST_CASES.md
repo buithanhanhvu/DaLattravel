@@ -7,25 +7,6 @@
 
 ---
 
-## 🖼️ THƯ VIỆN HÌNH ẢNH KIỂM THỬ THỰC TẾ (TEST EVIDENCE SCREENSHOTS)
-
-- **Trang chủ & Navbar 1 Dòng**: ![Homepage](docs/screenshots/01_homepage.png)
-- **Form Lập Lịch Trình**: ![Trip Planner Form](docs/screenshots/02_trip_planner_form.png)
-- **Kết Quả Định Tuyến OSRM & Bản Đồ Polyline**: ![Trip Planner Result](docs/screenshots/03_trip_planner_result.png)
-- **Ghép Xe Đi Chung**: ![Carpool](docs/screenshots/04_carpool.png)
-- **Danh Sách Địa Điểm Du Lịch**: ![Tourist Places](docs/screenshots/05_tourist_places.png)
-- **Danh Sách Khách Sạn & Resort**: ![Hotels List](docs/screenshots/06_hotels_list.png)
-- **Modal Đặt Phòng Khách Sạn**: ![Booking Modal](docs/screenshots/07_hotel_booking_modal.png)
-- **Alert Đặt Phòng Thành Công (DLBK-XXXX)**: ![Booking Success](docs/screenshots/08_booking_success.png)
-- **Danh Sách Nhà Hàng Ẩm Thực**: ![Restaurants](docs/screenshots/09_restaurants.png)
-- **Trang Đăng Nhập Google Identity**: ![Login Google](docs/screenshots/10_login_google.png)
-- **Bảng Điều Khiển Admin Dashboard**: ![Admin Dashboard](docs/screenshots/11_admin_dashboard.png)
-- **Admin Duyệt Đơn Đặt Phòng**: ![Admin Bookings](docs/screenshots/12_admin_bookings.png)
-- **Admin Quản Lý Khách Sạn CRUD**: ![Admin Hotels](docs/screenshots/13_admin_hotels.png)
-- **Admin Quản Lý Người Dùng RBAC**: ![Admin Users](docs/screenshots/14_admin_users.png)
-
----
-
 ## 👨‍💻 PHẦN 1: PHÂN HỆ XÁC THỰC & NGƯỜI DÙNG (AUTHENTICATION & USER)
 
 | Test Case ID | Feature | Mô tả Kịch bản Kiểm thử | Điều kiện tiền đề (Pre-conditions) | Các bước thực hiện (Steps) | Dữ liệu kiểm thử (Test Data) | Kết quả mong đợi (Expected Output) | Kỹ thuật áp dụng |
@@ -105,7 +86,7 @@
 | **TC_API_002** | Auth | API Đăng nhập thành công thiết lập Session | Tài khoản `user` có trong CSDL | 1. POST `/login`<br>2. Params `username=user`, `password=user123` | User: `user`<br>Pass: `user123` | HTTP 302 Found/Redirect `/`. Session `loggedInUser` được khởi tạo thành công. | Session Auth API |
 | **TC_API_003** | Auth - Google | API Đăng nhập Google xác thực JWT Token | Credential Token Google hợp lệ | 1. POST `/login/google`<br>2. Param `credential={jwt_token}` | Credential: `eyJhbGci...` | Decode JWT trích xuất email/name thành công, tạo User mới trong CSDL và cấp Session. | Google OAuth2 API |
 | **TC_API_004** | Security | Truy cập API Admin không có Session | Session `loggedInUser == null` | 1. GET `/admin`<br>2. Không đính kèm Session Cookie | No Session | `AuthInterceptor` chặn. Response HTTP 302 Redirect về `/login?error=please_login`. | Security Filter API |
-| **TC_API_005** | Security | Truy cập API Admin với Session `USER` không đủ quyền | Session user role `USER` | 1. GET `/admin`<br>2. Đính kèm Cookie Session of `USER` | Role: `USER` | `AuthInterceptor` chặn. Response HTTP 302 Redirect về `/login?error=forbidden`. | RBAC Security API |
+| **TC_API_005** | Security | Truy cập API Admin với Session `USER` không đủ quyền | Session user role `USER` | 1. GET `/admin`<br>2. Đính kèm Cookie Session của `USER` | Role: `USER` | `AuthInterceptor` chặn. Response HTTP 302 Redirect về `/login?error=forbidden`. | RBAC Security API |
 | **TC_API_006** | Booking | API Đặt phòng khách sạn tạo mã `DLBK-XXXX` | Khách sạn ID 1 tồn tại | 1. POST `/hotels/book`<br>2. Form data điền thông tin đặt phòng | Hotel ID: 1<br>Checkin: 2026-08-01<br>Checkout: 2026-08-03 | HTTP 302 Redirect `/hotels`. Đơn lưu vào CSDL với mã `DLBK-XXXX`, status `PENDING`, tổng tiền tính chuẩn. | Booking Processing API |
 | **TC_API_007** | Admin | API Duyệt đơn đặt phòng (`PENDING` $\rightarrow$ `CONFIRMED`) | Session `ADMIN`, đơn `DLBK-8300` tồn tại | 1. POST `/admin/bookings/update-status`<br>2. Params `bookingId=1`, `status=CONFIRMED` | Status: `CONFIRMED` | HTTP 302 Redirect `/admin/bookings`. Status đơn đổi thành `CONFIRMED` trong CSDL. | Admin Action API |
 | **TC_API_008** | Security | Chống tấn công SQL Injection tại form tìm kiếm & đăng nhập | Không có | 1. Input query: `admin' OR '1'='1`<br>2. Thử đăng nhập hoặc tìm kiếm | SQL Payload | Hệ thống dùng Spring Data JPA Prepared Statements. Không bị SQL Injection, không lộ lỗi SQL. | SQL Injection Prev |
