@@ -62,6 +62,25 @@ public class AuthController {
         return "redirect:/login?error=invalid";
     }
 
+    @PostMapping("/login/google")
+    public String handleGoogleLogin(
+            @RequestParam String credential,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+        try {
+            User user = authService.processGoogleLogin(credential);
+            session.setAttribute("loggedInUser", user);
+            redirectAttributes.addFlashAttribute("successMessage", "Đăng nhập Google thành công! Chào mừng " + user.getFullName());
+            if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                return "redirect:/admin";
+            }
+            return "redirect:/";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Đăng nhập bằng Google thất bại: " + e.getMessage());
+            return "redirect:/login";
+        }
+    }
+
     @GetMapping("/register")
     public String registerPage() {
         return "auth/register";

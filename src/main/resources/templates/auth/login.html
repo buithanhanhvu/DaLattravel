@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head('Đăng Nhập Hàng Đầu')}">
+<head th:replace="~{fragments/header :: head('Đăng Nhập - DaLatTravel')}">
 </head>
 <body class="bg-light">
 
@@ -9,48 +9,67 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card card-custom p-4 p-md-5 shadow-lg">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5" style="max-width: 440px;">
+            <div class="card card-custom p-4 p-md-4 shadow-lg border-0 rounded-4">
                 <div class="text-center mb-4">
-                    <div class="rounded-circle bg-success-subtle text-success p-3 mx-auto mb-3 d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                        <i class="fa-solid fa-tree fs-1 text-success"></i>
+                    <div class="rounded-circle bg-success-subtle text-success p-3 mx-auto mb-3 d-inline-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                        <i class="fa-solid fa-tree fs-2 text-success"></i>
                     </div>
-                    <h3 class="fw-extrabold text-dark">Đăng Nhập DaLatTravel</h3>
-                    <p class="text-muted small">Đăng nhập tài khoản để quản lý lịch trình & dịch vụ du lịch</p>
+                    <h3 class="fw-bold text-dark mb-1">Đăng Nhập</h3>
+                    <p class="text-muted small mb-0">Chào mừng bạn trở lại với DaLatTravel</p>
                 </div>
 
-                <div th:if="${errorMessage}" class="alert alert-danger fw-bold rounded-3 small" th:text="${errorMessage}"></div>
-                <div th:if="${successMessage}" class="alert alert-success fw-bold rounded-3 small" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger fw-bold rounded-3 small p-3 mb-3" th:text="${errorMessage}"></div>
+                <div th:if="${successMessage}" class="alert alert-success fw-bold rounded-3 small p-3 mb-3" th:text="${successMessage}"></div>
 
                 <form th:action="@{/login}" method="post">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Tên đăng nhập hoặc Email:</label>
+                        <label class="form-label fw-bold small text-secondary">Tên đăng nhập hoặc Email:</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="fa-solid fa-user text-secondary"></i></span>
-                            <input type="text" name="username" class="form-control form-control-lg fs-6" placeholder="Ví dụ: admin hoặc user" required autofocus>
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-user text-secondary"></i></span>
+                            <input type="text" name="username" class="form-control border-start-0 py-2 fs-6" placeholder="Nhập username hoặc email" required autofocus>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Mật khẩu:</label>
+                        <label class="form-label fw-bold small text-secondary">Mật khẩu:</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light"><i class="fa-solid fa-lock text-secondary"></i></span>
-                            <input type="password" name="password" class="form-control form-control-lg fs-6" placeholder="Nhập mật khẩu" required>
+                            <span class="input-group-text bg-light border-end-0"><i class="fa-solid fa-lock text-secondary"></i></span>
+                            <input type="password" name="password" class="form-control border-start-0 py-2 fs-6" placeholder="Nhập mật khẩu" required>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow mb-3">
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm py-2 fs-6 mb-3">
                         <i class="fa-solid fa-right-to-bracket me-2"></i> ĐĂNG NHẬP
                     </button>
                 </form>
 
-                <div class="p-3 bg-light rounded-3 text-secondary small mb-3">
-                    <p class="fw-bold text-dark mb-1"><i class="fa-solid fa-key text-warning me-1"></i> Tài khoản mẫu dùng thử:</p>
-                    <p class="mb-1">• <strong>Admin</strong>: `admin` / `admin123` (Truy cập trang Quản trị)</p>
-                    <p class="mb-0">• <strong>User</strong>: `user` / `user123` (Người dùng thông thường)</p>
+                <!-- Google Sign-In Section -->
+                <div class="text-center my-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <hr class="flex-grow-1 my-0">
+                        <span class="px-3 text-muted small fw-bold text-uppercase" style="font-size: 0.75rem;">Hoặc đăng nhập với</span>
+                        <hr class="flex-grow-1 my-0">
+                    </div>
+
+                    <script src="https://accounts.google.com/gsi/client" async defer></script>
+                    <div id="g_id_onload"
+                         data-client_id="1071806914161-7tjfbvs26pk1n47t89lr14q201djorre.apps.googleusercontent.com"
+                         data-login_uri="http://localhost:8080/login/google"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin w-100 d-flex justify-content-center"
+                         data-type="standard"
+                         data-size="large"
+                         data-theme="outline"
+                         data-text="sign_in_with"
+                         data-shape="pill"
+                         data-logo_alignment="left"
+                         data-width="320">
+                    </div>
                 </div>
 
-                <div class="text-center pt-3 border-top">
+                <div class="text-center pt-3 border-top mt-3">
                     <p class="small text-muted mb-0">Chưa có tài khoản? <a href="/register" class="fw-bold text-success text-decoration-none">Đăng ký ngay &rarr;</a></p>
                 </div>
 

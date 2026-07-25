@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head('Đăng Ký Tài Khoản Mới')}">
+<head th:replace="~{fragments/header :: head('Đăng Ký Tài Khoản - DaLatTravel')}">
 </head>
 <body class="bg-light">
 
@@ -9,53 +9,53 @@
 
 <div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card card-custom p-4 p-md-5 shadow-lg">
+        <div class="col-12 col-md-8 col-lg-6" style="max-width: 540px;">
+            <div class="card card-custom p-4 p-md-4 shadow-lg border-0 rounded-4">
                 <div class="text-center mb-4">
-                    <div class="rounded-circle bg-warning-subtle text-warning-emphasis p-3 mx-auto mb-3 d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                        <i class="fa-solid fa-user-plus fs-1 text-warning"></i>
+                    <div class="rounded-circle bg-success-subtle text-success p-3 mx-auto mb-3 d-inline-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                        <i class="fa-solid fa-user-plus fs-2 text-success"></i>
                     </div>
-                    <h3 class="fw-extrabold text-dark">Đăng Ký Thành Viên DaLatTravel</h3>
-                    <p class="text-muted small">Tạo tài khoản miễn phí để lên lịch trình và ghép xe tiện lợi</p>
+                    <h3 class="fw-bold text-dark mb-1">Đăng Ký Thành Viên</h3>
+                    <p class="text-muted small mb-0">Tạo tài khoản để trải nghiệm toàn bộ tiện ích du lịch Đà Lạt</p>
                 </div>
 
-                <div th:if="${errorMessage}" class="alert alert-danger fw-bold rounded-3 small" th:text="${errorMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger fw-bold rounded-3 small p-3 mb-3" th:text="${errorMessage}"></div>
 
                 <form th:action="@{/register}" method="post">
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Tên đăng nhập (*):</label>
-                            <input type="text" name="username" class="form-control" th:value="${username}" placeholder="Ví dụ: traveler2026" required>
+                            <label class="form-label fw-bold small text-secondary">Tên đăng nhập (*):</label>
+                            <input type="text" name="username" class="form-control py-2 fs-6" th:value="${username}" placeholder="traveler2026" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Họ và tên (*):</label>
-                            <input type="text" name="fullName" class="form-control" th:value="${fullName}" placeholder="Ví dụ: Nguyễn Văn A" required>
+                            <label class="form-label fw-bold small text-secondary">Họ và tên (*):</label>
+                            <input type="text" name="fullName" class="form-control py-2 fs-6" th:value="${fullName}" placeholder="Nguyễn Văn A" required>
                         </div>
                     </div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Email liên hệ (*):</label>
-                            <input type="email" name="email" class="form-control" th:value="${email}" placeholder="nguyenvana@gmail.com" required>
+                            <label class="form-label fw-bold small text-secondary">Email liên hệ (*):</label>
+                            <input type="email" name="email" class="form-control py-2 fs-6" th:value="${email}" placeholder="nguyenvana@gmail.com" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">Số điện thoại (*):</label>
-                            <input type="text" name="phoneNumber" class="form-control" th:value="${phoneNumber}" placeholder="0901234567" required>
+                            <label class="form-label fw-bold small text-secondary">Số điện thoại (*):</label>
+                            <input type="text" name="phoneNumber" class="form-control py-2 fs-6" th:value="${phoneNumber}" placeholder="0901234567" required>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Mật khẩu (*):</label>
-                        <input type="password" name="password" class="form-control form-control-lg fs-6" placeholder="Tối thiểu 6 ký tự" required>
+                        <label class="form-label fw-bold small text-secondary">Mật khẩu (*):</label>
+                        <input type="password" name="password" class="form-control py-2 fs-6" placeholder="Tối thiểu 6 ký tự" required>
                     </div>
 
-                    <button type="submit" class="btn btn-warning text-dark btn-lg w-100 fw-bold rounded-pill shadow mb-3">
-                        <i class="fa-solid fa-user-check me-2"></i> HOÀN TẤT ĐĂNG KÝ TÀI KHOẢN
+                    <button type="submit" class="btn btn-success btn-lg w-100 fw-bold rounded-pill shadow-sm py-2 fs-6 mb-3">
+                        <i class="fa-solid fa-user-check me-2"></i> HOÀN TẤT ĐĂNG KÝ
                     </button>
                 </form>
 
-                <div class="text-center pt-3 border-top">
-                    <p class="small text-muted mb-0">Đã có tài khoản? <a href="/login" class="fw-bold text-warning text-dark text-decoration-none">Đăng nhập tại đây &rarr;</a></p>
+                <div class="text-center pt-3 border-top mt-2">
+                    <p class="small text-muted mb-0">Đã có tài khoản? <a href="/login" class="fw-bold text-success text-decoration-none">Đăng nhập tại đây &rarr;</a></p>
                 </div>
 
             </div>

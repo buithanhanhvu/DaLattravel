@@ -9,39 +9,53 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
     <style>
         :root {
-            --primary-green: #2e7d32;
-            --primary-dark: #1b5e20;
-            --accent-orange: #ff9800;
+            --primary-green: #15803d;
+            --primary-dark: #14532d;
+            --accent-orange: #f59e0b;
             --bg-light: #f8fafc;
         }
         body {
-            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--bg-light);
-            color: #1e293b;
+            color: #0f172a;
+            -webkit-font-smoothing: antialiased;
         }
         .navbar-custom {
-            background: linear-gradient(135deg, #1b5e20, #2e7d32);
-            padding: 12px 0;
-            box-shadow: 0 4px 20px rgba(27, 94, 32, 0.15);
+            background: linear-gradient(135deg, #14532d, #16a34a);
+            padding: 10px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
         .navbar-custom .navbar-brand {
             font-weight: 800;
-            font-size: 1.45rem;
+            font-size: 1.4rem;
             letter-spacing: -0.5px;
+            white-space: nowrap;
         }
         .navbar-custom .nav-link {
             font-weight: 600;
-            font-size: 0.95rem;
-            color: rgba(255, 255, 255, 0.88) !important;
-            padding: 8px 14px !important;
-            border-radius: 10px;
+            font-size: 0.88rem;
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 8px 12px !important;
+            border-radius: 8px;
+            white-space: nowrap !important;
             transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .navbar-custom .nav-link:hover, 
         .navbar-custom .nav-link.active {
             color: #ffffff !important;
-            background: rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.22);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .user-name-badge {
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            vertical-align: middle;
         }
         .footer-custom {
             background: #0f172a;
@@ -59,7 +73,7 @@
             transition: color 0.2s;
         }
         .footer-custom a:hover {
-            color: #38ef7d;
+            color: #4ade80;
         }
         .card-custom-img {
             height: 200px;
@@ -75,86 +89,86 @@
             background: #ffffff;
         }
         .card-custom:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 36px rgba(46, 125, 50, 0.12);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(22, 163, 74, 0.12);
         }
     </style>
 </head>
 <body>
 
 <!-- Unified Navigation Bar Fragment -->
-<nav th:fragment="navbar(activePage)" class="navbar navbar-expand-lg navbar-dark navbar-custom sticky-top shadow">
-    <div class="container">
+<nav th:fragment="navbar(activePage)" class="navbar navbar-expand-xl navbar-dark navbar-custom sticky-top shadow-sm">
+    <div class="container-fluid px-lg-5">
         <a class="navbar-brand fw-bold d-flex align-items-center gap-2 text-white" href="/">
             <i class="fa-solid fa-tree text-warning fs-3"></i>
             <span>DaLatTravel</span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto gap-1 align-items-center">
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'home'} ? 'active' : ''" href="/">
-                        <i class="fa-solid fa-house me-1"></i> Trang chủ
+                        <i class="fa-solid fa-house"></i> Trang chủ
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'trip-planner'} ? 'active' : ''" href="/trip-planner">
-                        <i class="fa-solid fa-route me-1"></i> Lên lịch trình
+                        <i class="fa-solid fa-route"></i> Lên lịch trình
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'carpool'} ? 'active' : ''" href="/carpool">
-                        <i class="fa-solid fa-car-side me-1"></i> Ghép xe đi chung
+                        <i class="fa-solid fa-car-side"></i> Ghép xe đi chung
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'tourist-places'} ? 'active' : ''" href="/tourist-places">
-                        <i class="fa-solid fa-mountain me-1"></i> Địa điểm
+                        <i class="fa-solid fa-mountain"></i> Địa điểm
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'hotels'} ? 'active' : ''" href="/hotels">
-                        <i class="fa-solid fa-hotel me-1"></i> Khách sạn
+                        <i class="fa-solid fa-hotel"></i> Khách sạn
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'restaurants'} ? 'active' : ''" href="/restaurants">
-                        <i class="fa-solid fa-utensils me-1"></i> Nhà hàng
+                        <i class="fa-solid fa-utensils"></i> Nhà hàng
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'blog'} ? 'active' : ''" href="/blog">
-                        <i class="fa-solid fa-newspaper me-1"></i> Bài viết
+                        <i class="fa-solid fa-newspaper"></i> Bài viết
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:classappend="${activePage == 'contact'} ? 'active' : ''" href="/contact">
-                        <i class="fa-solid fa-envelope me-1"></i> Liên hệ
+                        <i class="fa-solid fa-envelope"></i> Liên hệ
                     </a>
                 </li>
             </ul>
 
             <!-- Auth status & Admin buttons -->
-            <div class="d-flex align-items-center ms-3 ps-3 border-start border-light border-opacity-25">
+            <div class="d-flex align-items-center ms-xl-3 ps-xl-3 border-start-xl border-light border-opacity-25 my-2 my-xl-0">
                 <div th:if="${session.loggedInUser != null}" class="d-flex align-items-center gap-2">
-                    <span class="text-white small me-1">
-                        <i class="fa-solid fa-user-circle text-warning me-1 fs-6"></i>
-                        <span th:text="${session.loggedInUser.fullName}">User</span>
+                    <span class="text-white small me-1 d-inline-flex align-items-center" th:title="${session.loggedInUser.fullName}">
+                        <i class="fa-solid fa-circle-user text-warning me-1 fs-5"></i>
+                        <span class="user-name-badge fw-bold" th:text="${session.loggedInUser.fullName}">User</span>
                     </span>
-                    <a th:if="${session.loggedInUser.role == 'ADMIN'}" href="/admin" class="btn btn-sm btn-outline-warning text-white fw-bold rounded-pill px-3">
+                    <a th:if="${session.loggedInUser.role == 'ADMIN'}" href="/admin" class="btn btn-sm btn-outline-warning text-white fw-bold rounded-pill px-3 text-nowrap">
                         <i class="fa-solid fa-shield-halved me-1"></i> Admin
                     </a>
-                    <a href="/logout" class="btn btn-sm btn-danger fw-bold rounded-pill px-3">
+                    <a href="/logout" class="btn btn-sm btn-danger fw-bold rounded-pill px-3 text-nowrap">
                         <i class="fa-solid fa-right-from-bracket me-1"></i> Thoát
                     </a>
                 </div>
                 <div th:if="${session.loggedInUser == null}" class="d-flex align-items-center gap-2">
-                    <a href="/login" class="btn btn-sm btn-outline-light fw-bold rounded-pill px-3">
+                    <a href="/login" class="btn btn-sm btn-outline-light fw-bold rounded-pill px-3 text-nowrap">
                         <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập
                     </a>
-                    <a href="/register" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3">
+                    <a href="/register" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3 text-nowrap">
                         <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
                     </a>
                 </div>

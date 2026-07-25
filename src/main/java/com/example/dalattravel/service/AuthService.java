@@ -65,4 +65,45 @@ public class AuthService {
         }
         return Optional.empty();
     }
+
+    public User processGoogleLogin(String credentialToken) {
+        try {
+            String[] parts = credentialToken.split("\\.");
+            if (parts.length >= 2) {
+                byte[] decodedBytes = java.util.Base64.getUrlDecoder().decode(parts[1]);
+                String payloadJson = new String(decodedBytes, StandardCharsets.UTF_8);
+
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.databind.JsonNode node = mapper.readTree(payloadJson);
+
+                String email = node.path("email").asText();
+                String name = node.path("name").asText();
+
+                if (email != null && !email.isBlank()) {
+                    Optional<User> existingUser = userRepository.findByEmail(email);
+                    if (existingUser.isPresent()) {
+                        return existingUser.get();
+                    }
+
+                    String username = email.contains("@") ? email.substring(0, email.indexOf("@")) : email;
+                    if (userRepository.existsByUsername(username)) {
+                        username = username + "_" + (System.currentTimeMillis() % 1000);
+                    }
+
+                    User newUser = User.builder()
+                            .username(username)
+                            .email(email)
+                            .fullName(name != null && !name.isBlank() ? name : username)
+                            .password(hashPassword("google_oauth_" + System.currentTimeMillis()))
+                            .role("USER")
+                            .build();
+
+                    return userRepository.save(newUser);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        throw new IllegalArgumentException("Không thể xác thực tài khoản Google!");
+    }
 }
