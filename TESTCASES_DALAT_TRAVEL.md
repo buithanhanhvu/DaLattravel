@@ -21,6 +21,26 @@
 
 ---
 
+## 🖼️ THƯ VIỆN HÌNH ẢNH KIỂM THỬ THỰC TẾ (TEST EVIDENCE SCREENSHOTS)
+
+- **Trang chủ & Navbar 1 Dòng**: ![Homepage](docs/screenshots/01_homepage.png)
+- **Form Lập Lịch Trình**: ![Trip Planner Form](docs/screenshots/02_trip_planner_form.png)
+- **Kết Quả Định Tuyến OSRM & Bản Đồ Polyline**: ![Trip Planner Result](docs/screenshots/03_trip_planner_result.png)
+- **Ghép Xe Đi Chung**: ![Carpool](docs/screenshots/04_carpool.png)
+- **Danh Sách Địa Điểm Du Lịch**: ![Tourist Places](docs/screenshots/05_tourist_places.png)
+- **Danh Sách Khách Sạn & Resort**: ![Hotels List](docs/screenshots/06_hotels_list.png)
+- **Modal Đặt Phòng Khách Sạn**: ![Booking Modal](docs/screenshots/07_hotel_booking_modal.png)
+- **Alert Đặt Phòng Thành Công (DLBK-XXXX)**: ![Booking Success](docs/screenshots/08_booking_success.png)
+- **Danh Sách Nhà Hàng Ẩm Thực**: ![Restaurants](docs/screenshots/09_restaurants.png)
+- **Trang Đăng Nhập Google Identity**: ![Login Google](docs/screenshots/10_login_google.png)
+- **Bảng Điều Khiển Admin Dashboard**: ![Admin Dashboard](docs/screenshots/11_admin_dashboard.png)
+- **Admin Duyệt Đơn Đặt Phòng**: ![Admin Bookings](docs/screenshots/12_admin_bookings.png)
+- **Admin Quản Lý Khách Sạn CRUD**: ![Admin Hotels](docs/screenshots/13_admin_hotels.png)
+- **Admin Quản Lý Người Dùng RBAC**: ![Admin Users](docs/screenshots/14_admin_users.png)
+
+
+---
+
 ## 📝 BẢNG MA TRẬN TEST CASES CHI TIẾT (DETAILED TEST CASES MATRIX)
 
 ### PHÂN HỆ 1: XÁC THỰC & PHÂN QUYỀN (AUTHENTICATION, RBAC & SECURITY)

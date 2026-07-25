@@ -1,108 +1,163 @@
-# 🌲 DaLatTravel - Hệ Thống Lập Lịch Trình & Ghép Xe Du Lịch Đà Lạt
+# 🌲 DaLatTravel - Hệ Thống Du Lịch Đà Lạt Thông Minh & Kết Nối Ghép Xe (Smart Tourism & Carpooling Platform)
 
-Ứng dụng web du lịch Đà Lạt thông minh xây dựng trên nền tảng **Java 21 & Spring Boot**, giúp du khách lập lịch trình tham quan tự động tối ưu chi phí và đăng ký ghép xe đi chung kết nối hành khách cùng tuyến đường.
-
----
-
-## 🚀 Tính Năng Nổi Bật
-
-### 1. 📍 Lập Lịch Trình Du Lịch Tự Động & Bản Đồ Real-time (`/trip-planner`)
-- **Tự động định vị GPS**: Nút `📍 Lấy vị trí hiện tại` sử dụng Geolocation API định vị tọa độ xuất phát.
-- **Bộ chọn địa điểm đa năng (Multi-select Search Dropdown)**: Cho phép tìm kiếm, lọc theo loại hình du lịch và chọn/bỏ chọn địa điểm có trong CSDL.
-- **Bản đồ tương tác Leaflet.js Real-time**: Cập nhật Marker điểm xuất phát và các địa điểm đã chọn theo thời gian thực.
-- **Thuật toán đường đi ngắn nhất (TSP / Nearest Neighbor)**: Tìm chuỗi địa điểm tham quan có tổng khoảng cách di chuyển ngắn nhất.
-- **Tự động đề xuất 3 Phương án (Tiết kiệm - Cân bằng - Cao cấp)**:
-  - ⚡ **Tiết kiệm**: Xe máy tự lái + Homestay / Hostel.
-  - ⚖️ **Cân bằng**: Ô tô 4 chỗ + Khách sạn 3 sao.
-  - 💎 **Cao cấp**: Ô tô 7 chỗ VIP + Resort / Khách sạn 4-5 sao.
-- **Phân bổ lịch trình chi tiết theo từng ngày (Timeline Schedule)**: Phân bổ địa điểm tham quan hợp lý theo từng khung giờ (Sáng / Trưa / Chiều) và tự động nhận diện loại địa điểm (Tham quan / Nhà hàng / Khách sạn).
-
-### 2. 🚕 Ghép Xe Đi Chung Tối Ưu Chi Phí (`/carpool`)
-- **Min-Cost Max-Flow (`MinCostMaxFlowService`)**: Thuật toán luồng cực đại chi phí cực tiểu giúp ghép các hành khách vào xe trống theo tiêu chí chi phí tối ưu nhất.
-- **Lập lộ trình đón/trả (`PDPTWService`)**: Thuật toán PDPTW (Pickup & Delivery Problem with Time Windows) sắp xếp thứ tự các điểm dừng đón/trả theo khung giờ.
-- **Khớp tuyến đường Polyline (`RouteMatchingService`)**: Snap tọa độ đón/trả lên tuyến chính của xe để kiểm tra cùng chiều và kiểm tra sức chứa ghế khả dụng từng đoạn đường.
-
-### 3. 🗺️ Tích Hợp Bản Đồ & Định Tuyến OSRM (`OsrmRouteService`)
-- Gọi REST API OpenStreetMap (OSRM) để lấy quãng đường thực tế (km), thời gian di chuyển và mảng tọa độ polyline hiển thị đường đi trên bản đồ Leaflet.
-
-### 4. 🏨 Chức Năng Đặt Phòng Khách Sạn (`/hotels`)
-- **Modal đặt phòng trực tiếp**: Cho phép du khách chọn ngày nhận/trả phòng (Check-in / Check-out), số lượng khách và điền thông tin người đặt.
-- **Tự động tính chi phí & Sinh mã đơn**: Tính toán tổng tiền theo số đêm lưu trú thực tế và cấp mã đặt phòng duy nhất dạng `DLBK-XXXX`.
-- **Lưu trữ CSDL & Quản lý trạng thái**: Lưu lịch sử đặt phòng với các trạng thái `PENDING` (Chờ duyệt), `CONFIRMED` (Đã duyệt), `CANCELLED` (Đã hủy).
-
-### 5. 🔐 Hệ Thống Đăng Ký, Đăng Nhập & Phân Quyền Admin (`/login`, `/register`, `/admin`)
-- **Xác thực Đăng ký & Đăng nhập (Authentication)**: Đăng ký thành viên mới (`/register`), đăng nhập (`/login`) mã hóa mật khẩu SHA-256 và lưu Session người dùng.
-- **Chắn truy cập bằng Interceptor (`AuthInterceptor`)**: Tự động kiểm tra quyền hạn `ROLE_ADMIN` trước khi truy cập bất kỳ tài nguyên `/admin/**` nào. Người dùng không đủ thẩm quyền sẽ bị chuyển hướng kèm thông báo lỗi.
-- **Trang Quản Trị Hệ Thống (`/admin`)**:
-  - **Dashboard Tổng Quan**: Thống kê số lượng địa điểm, khách sạn, nhà hàng, đơn đặt phòng và người dùng.
-  - **Quản Lý Đặt Phòng (`/admin/bookings`)**: Xem danh sách đơn đặt phòng và bấm nút **Duyệt** hoặc **Hủy** đơn.
-  - **Quản Lý CRUD**: Thêm, sửa, xóa Khách sạn, Địa điểm du lịch và Nhà hàng.
-  - **Quản Lý Người Dùng (`/admin/users`)**: Phân quyền tài khoản (`USER` <-> `ADMIN`).
-
-### 6. 🖼️ Giao Diện Hiện Đại & Đồng Bộ (Unified Responsive UI)
-- **Thanh Navigation Fragment Đồng Bộ**: Tích hợp navbar thống nhất 100% trên tất cả các trang với 8 mục menu chính:
-  - 🏠 **Trang chủ** (`/`)
-  - 🗺️ **Lên lịch trình** (`/trip-planner`)
-  - 🚗 **Ghép xe đi chung** (`/carpool`)
-  - 🏔️ **Địa điểm** (`/tourist-places`)
-  - 🏨 **Khách sạn** (`/hotels`)
-  - 🍜 **Nhà hàng** (`/restaurants`)
-  - 📝 **Bài viết** (`/blog`)
-  - ✉️ **Liên hệ** (`/contact`)
-- **Hình Ảnh Thumbnail Thực Tế (Rich Media Cards)**: Tự động nạp hình ảnh Unsplash sắc nét cho 50+ địa điểm du lịch, 10+ khách sạn, 12+ nhà hàng và các bài viết kinh nghiệm.
+![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1.0-green?style=for-the-badge&logo=springboot)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-blue?style=for-the-badge&logo=mysql)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-3.1-emerald?style=for-the-badge&logo=thymeleaf)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple?style=for-the-badge&logo=bootstrap)
+![QA Testing](https://img.shields.io/badge/QA_Test-36%2F36_PASSED-brightgreen?style=for-the-badge&logo=githubactions)
 
 ---
 
-## 🛠️ Công Nghệ Sử Dụng
+## 📌 GIỚI THIỆU DỰ ÁN (PROJECT OVERVIEW)
 
-- **Ngôn ngữ**: Java 21 (LTS)
-- **Framework**: Spring Boot 3.x / 4.x (Spring MVC, Spring Data JPA)
-- **Cơ sở dữ liệu**: MySQL Server 8.0 (Database: `dalattravel_db`)
-- **Frontend / Template**: Thymeleaf HTML5, Bootstrap 5.3, FontAwesome 6.4, Leaflet.js
-- **Thư viện phụ trợ**: Lombok, Jackson JSON, RestTemplate
+**DaLatTravel** là giải pháp nền tảng du lịch thông minh toàn diện dành cho thành phố Đà Lạt, kết hợp giữa **Thuật toán Tối ưu Lịch trình Du lịch (Traveling Salesman Problem - TSP)**, **Định tuyến thực tế (OSRM API)**, **Hệ thống Ghép xe đi chung tiết kiệm**, **Đặt phòng Khách sạn thời gian thực**, **Đăng nhập Google OAuth2** và **Trang Quản trị Admin phân quyền (RBAC)**.
+
+Dự án được thiết kế chuẩn kiến trúc **Spring MVC**, áp dụng các tiêu chuẩn phát triển phần mềm hiện đại cùng bộ **36 Test Cases kiểm thử tự động & thủ công (PASSED 100%)**.
 
 ---
 
-## ⚙️ Cấu Hình Cơ Sở Dữ Liệu MySQL
+## 📸 THƯ VIỆN GIAO DIỆN & TÍNH NĂNG (FEATURE GALLERY)
 
-Đảm bảo dịch vụ MySQL đang chạy trên máy cục bộ `127.0.0.1:3306`. Cấu hình trong `src/main/resources/application.properties`:
+### 1. 🏠 Trang Chủ Du Lịch Đà Lạt (Homepage)
+*Giao diện hiện đại, chuẩn Responsive, hiển thị danh mục Địa điểm nổi bật, Khách sạn sang trọng, Quán ăn đặc sản và Cẩm nang du lịch.*
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/dalattravel_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&characterEncoding=UTF-8
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.datasource.username=root
-spring.datasource.password=123456
+![Homepage](docs/screenshots/01_homepage.png)
 
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=false
+---
+
+### 2. 🗺️ Thuật Toán Lên Lịch Trình Tự Động & Bản Đồ OSRM (Trip Planner & Route Optimization)
+*Tự động lập lịch trình du lịch tối ưu dựa trên thời gian, sở thích và vị trí GPS. Định tuyến đường đi thực tế (km, phút) với OpenStreetMap OSRM và hiển thị Polyline trên bản đồ tương tác LeafletJS.*
+
+| 📋 Form Chọn Tiêu Chí Lịch Trình | 📍 Kết Quả Lập Lịch Trình & Bản Đồ OSRM |
+| :---: | :---: |
+| ![Trip Planner Form](docs/screenshots/02_trip_planner_form.png) | ![Trip Planner Result](docs/screenshots/03_trip_planner_result.png) |
+
+---
+
+### 3. 🚗 Nền Tảng Ghép Xe Đi Chung (Carpooling System)
+*Kết nối tài xế và du khách có chung lộ trình (TP.HCM, Sân bay Liên Khương, Đà Lạt), hỗ trợ lọc theo tuyến và tiết kiệm chi phí di chuyển.*
+
+![Carpooling](docs/screenshots/04_carpool.png)
+
+---
+
+### 4. 🏔️ Khám Phá Địa Điểm, Khách Sạn & Nhà Hàng (Discovery Modules)
+*Hiển thị 50+ địa điểm tham quan, 10 khách sạn resort và 12 nhà hàng ẩm thực với hình ảnh HD sắc nét, số sao đánh giá và bộ lọc tìm kiếm.*
+
+| 🏞️ Địa Điểm Du Lịch (50+ Spots) | 🏨 Khách Sạn & Resort | 🍲 Nhà Hàng & Quán Ăn |
+| :---: | :---: | :---: |
+| ![Tourist Places](docs/screenshots/05_tourist_places.png) | ![Hotels List](docs/screenshots/06_hotels_list.png) | ![Restaurants](docs/screenshots/09_restaurants.png) |
+
+---
+
+### 5. 🏨 Chức Năng Đặt Phòng Khách Sạn (Hotel Booking & Instant Calculation)
+*Modal đặt phòng trực quan: Chọn ngày Check-in/Check-out, số khách, tự động tính tổng tiền theo đêm và cấp mã đặt phòng duy nhất dạng `DLBK-XXXX`.*
+
+| 📝 Form Modal Đặt Phòng | ✅ Đặt Phòng Thành Công (Code DLBK-XXXX) |
+| :---: | :---: |
+| ![Booking Modal](docs/screenshots/07_hotel_booking_modal.png) | ![Booking Success Alert](docs/screenshots/08_booking_success.png) |
+
+---
+
+### 6. 🔐 Đăng Nhập Google OAuth2 & Phân Quyền Admin (Authentication & Security)
+*Đăng nhập an toàn bằng Google Identity Services (OAuth2 JWT) hoặc tài khoản thường. Chặn bảo mật `AuthInterceptor` kiểm soát quyền truy cập tài nguyên `/admin`.*
+
+| 🔑 Trang Đăng Nhập & Google Sign-In | 🛡️ Bảng Điều Khiển Admin Dashboard |
+| :---: | :---: |
+| ![Login Google](docs/screenshots/10_login_google.png) | ![Admin Dashboard](docs/screenshots/11_admin_dashboard.png) |
+
+| 📋 Duyệt Đơn Đặt Phòng Admin | 🏨 Quản Lý Khách Sạn CRUD | 👥 Phân Quyền Người Dùng (RBAC) |
+| :---: | :---: | :---: |
+| ![Admin Bookings](docs/screenshots/12_admin_bookings.png) | ![Admin Hotels](docs/screenshots/13_admin_hotels.png) | ![Admin Users](docs/screenshots/14_admin_users.png) |
+
+---
+
+## 🛠️ CÔNG NGHỆ & KIẾN TRÚC HỆ THỐNG (TECH STACK & ARCHITECTURE)
+
+- **Backend Core**: Java 21 LTS, Spring Boot 4.1.0, Spring Data JPA, Hibernate ORM.
+- **Security & Auth**: Google Identity Services (OAuth2 JWT), SHA-256 Password Hashing, `AuthInterceptor` (Session-based RBAC protection).
+- **Algorithms & APIs**: TSP (Traveling Salesman Problem) Greedy Route Optimization, OpenStreetMap OSRM REST Routing API.
+- **Frontend & UI**: HTML5, Vanilla CSS, Bootstrap 5.3, FontAwesome 6, LeafletJS Interactive Maps.
+- **Database**: MySQL 8.0 với InnoDB, UTF-8 Encoding.
+- **Build Tool & Testing**: Maven (`mvnw`), Automated Browser End-to-End Testing (`browser_subagent`).
+
+---
+
+## 📊 BẢNG TỔNG HỢP KIỂM THỬ ĐÁNH GIÁ CHẤT LƯỢNG (QA/QC TEST MATRIX)
+
+Dự án đã trải qua quá trình kiểm thử toàn diện với **36 Test Cases (PASSED 100%)** phủ khắp các phân hệ. Tham khảo tài liệu kiểm thử chi tiết tại:
+👉 [Tài Liệu Full Test Cases Suite (TESTCASES_DALAT_TRAVEL.md)](TESTCASES_DALAT_TRAVEL.md)  
+👉 [Tài Liệu Hướng Dẫn Kịch Bản Test (testcase hướng dẫn .md)](testcase%20h%C6%B0%E1%BB%9Bng%20d%E1%BA%ABn%20.md)
+
+| Phân hệ / Mô-đun | Số Lượng TC | PASSED | FAILED | Tỷ Lệ Thành Công |
+| :--- | :---: | :---: | :---: | :---: |
+| **1. Xác thực & Bảo mật (Auth, Google OAuth2, Security Interceptor)** | 10 | 10 | 0 | **100%** |
+| **2. Lên Lịch Trình Tự Động (Trip Planner, TSP & OSRM API)** | 5 | 5 | 0 | **100%** |
+| **3. Ghép Xe Đi Chung (Carpooling System)** | 3 | 3 | 0 | **100%** |
+| **4. Danh Mục Địa Điểm, Khách Sạn & Nhà Hàng** | 5 | 5 | 0 | **100%** |
+| **5. Đặt Phòng Khách Sạn (Booking & Calculation)** | 4 | 4 | 0 | **100%** |
+| **6. Quản Trị Hệ Thống (Admin Dashboard & CRUD)** | 7 | 7 | 0 | **100%** |
+| **7. Bài Viết & Liên Hệ (Blog & Contact Form)** | 2 | 2 | 0 | **100%** |
+| **TỔNG CỘNG** | **36** | **36** | **0** | **100%** |
+
+---
+
+## 🚀 HƯỚNG DẪN CÀI ĐẶT & CHẠY DỰ ÁN (SETUP INSTRUCTIONS)
+
+### 1. Yêu Cầu Tiền Điều Kiện (Prerequisites)
+- **Java Development Kit (JDK)**: Java 21 trở lên.
+- **Database**: MySQL 8.0+ đang hoạt động tại `localhost:3306`.
+
+### 2. Cấu Hình CSDL (Database Setup)
+Tạo CSDL MySQL:
+```sql
+CREATE DATABASE dalattravel_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-Khi ứng dụng khởi động, `DataSeeder` sẽ tự động khởi tạo và nạp dữ liệu mẫu ban đầu vào MySQL.
+Cấu hình tài khoản CSDL trong `src/main/resources/application.properties` (Mặc định: `root` / password trống hoặc tự chỉnh).
 
----
-
-## 💻 Hướng Dẫn Khởi Chạy Ứng Dụng
-
-### 1. Biên dịch dự án:
+### 3. Biên Dịch & Chạy Ứng Dụng (Run Application)
+Tải dependency và biên dịch dự án:
 ```powershell
 .\mvnw.cmd clean test-compile
 ```
 
-### 2. Khởi chạy ứng dụng Spring Boot:
+Khởi chạy ứng dụng Spring Boot:
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-### 3. Truy cập ứng dụng trên trình duyệt:
-- **Trang chủ**: [http://localhost:8080](http://localhost:8080)
-- **Lập lịch trình**: [http://localhost:8080/trip-planner](http://localhost:8080/trip-planner)
-- **Ghép xe đi chung**: [http://localhost:8080/carpool](http://localhost:8080/carpool)
-- **Địa điểm du lịch**: [http://localhost:8080/tourist-places](http://localhost:8080/tourist-places)
-- **Khách sạn**: [http://localhost:8080/hotels](http://localhost:8080/hotels)
-- **Nhà hàng**: [http://localhost:8080/restaurants](http://localhost:8080/restaurants)
+Sau khi ứng dụng khởi chạy thành công, mở trình duyệt truy cập:
+- **Trang chủ**: `http://localhost:8080`
+- **Tài khoản Admin mẫu**: `admin` / `admin123`
+- **Tài khoản User mẫu**: `user` / `user123`
 
 ---
 
-## 🧪 Kết Quả Kiểm Thử & Xác Nhận Giao Diện
+## 📁 CẤU TRÚC THƯ MỤC DỰ ÁN (PROJECT STRUCTURE)
 
-Tất cả các tính năng lập lịch trình, ghép xe, bản đồ định tuyến OSRM và giao diện web đồng bộ đã được kiểm thử tự động trực tiếp trên trình duyệt live và hoạt động ổn định.
+```
+DaLattravel/
+├── docs/screenshots/               # Thư viện ảnh chụp tính năng cho README
+├── src/main/java/com/example/dalattravel/
+│   ├── config/                     # WebMvcConfig, AuthInterceptor, DataSeeder
+│   ├── controller/                 # HomeController, TripPlannerController, HotelController, AdminController, AuthController...
+│   ├── model/                      # TouristPlace, Hotel, Restaurant, HotelBooking, User, Carpool...
+│   ├── repository/                 # Spring Data JPA Repositories
+│   └── service/                    # AuthService, OsrmRouteService, TripPlannerService...
+├── src/main/resources/
+│   ├── templates/                  # Thymeleaf HTML Views (admin/, auth/, hotels/, trip-planner/, fragments/)
+│   └── application.properties     # Config MySQL, Port 8080
+├── TESTCASES_DALAT_TRAVEL.md      # Full 36 QA Test Cases Suite Document
+├── testcase hướng dẫn .md          # Kịch bản kiểm thử hướng dẫn chi tiết
+└── README.md                       # Tài liệu giới thiệu dự án cho Nhà tuyển dụng
+```
+
+---
+
+## 📝 GIẤY PHÉP & TÁC GIẢ (AUTHOR & LICENSE)
+
+- **Đơn vị phát triển**: DaLatTravel Dev & QA Team.
+- **Repository**: [https://github.com/buithanhanhvu/DaLattravel.git](https://github.com/buithanhanhvu/DaLattravel.git)
+- **Bản quyền**: © 2026 Đà Lạt Travel System. All rights reserved.
