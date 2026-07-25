@@ -25,7 +25,21 @@
 ### 3. 🗺️ Tích Hợp Bản Đồ & Định Tuyến OSRM (`OsrmRouteService`)
 - Gọi REST API OpenStreetMap (OSRM) để lấy quãng đường thực tế (km), thời gian di chuyển và mảng tọa độ polyline hiển thị đường đi trên bản đồ Leaflet.
 
-### 4. 🖼️ Giao Diện Hiện Đại & Đồng Bộ (Unified Responsive UI)
+### 4. 🏨 Chức Năng Đặt Phòng Khách Sạn (`/hotels`)
+- **Modal đặt phòng trực tiếp**: Cho phép du khách chọn ngày nhận/trả phòng (Check-in / Check-out), số lượng khách và điền thông tin người đặt.
+- **Tự động tính chi phí & Sinh mã đơn**: Tính toán tổng tiền theo số đêm lưu trú thực tế và cấp mã đặt phòng duy nhất dạng `DLBK-XXXX`.
+- **Lưu trữ CSDL & Quản lý trạng thái**: Lưu lịch sử đặt phòng với các trạng thái `PENDING` (Chờ duyệt), `CONFIRMED` (Đã duyệt), `CANCELLED` (Đã hủy).
+
+### 5. 🔐 Hệ Thống Đăng Ký, Đăng Nhập & Phân Quyền Admin (`/login`, `/register`, `/admin`)
+- **Xác thực Đăng ký & Đăng nhập (Authentication)**: Đăng ký thành viên mới (`/register`), đăng nhập (`/login`) mã hóa mật khẩu SHA-256 và lưu Session người dùng.
+- **Chắn truy cập bằng Interceptor (`AuthInterceptor`)**: Tự động kiểm tra quyền hạn `ROLE_ADMIN` trước khi truy cập bất kỳ tài nguyên `/admin/**` nào. Người dùng không đủ thẩm quyền sẽ bị chuyển hướng kèm thông báo lỗi.
+- **Trang Quản Trị Hệ Thống (`/admin`)**:
+  - **Dashboard Tổng Quan**: Thống kê số lượng địa điểm, khách sạn, nhà hàng, đơn đặt phòng và người dùng.
+  - **Quản Lý Đặt Phòng (`/admin/bookings`)**: Xem danh sách đơn đặt phòng và bấm nút **Duyệt** hoặc **Hủy** đơn.
+  - **Quản Lý CRUD**: Thêm, sửa, xóa Khách sạn, Địa điểm du lịch và Nhà hàng.
+  - **Quản Lý Người Dùng (`/admin/users`)**: Phân quyền tài khoản (`USER` <-> `ADMIN`).
+
+### 6. 🖼️ Giao Diện Hiện Đại & Đồng Bộ (Unified Responsive UI)
 - **Thanh Navigation Fragment Đồng Bộ**: Tích hợp navbar thống nhất 100% trên tất cả các trang với 8 mục menu chính:
   - 🏠 **Trang chủ** (`/`)
   - 🗺️ **Lên lịch trình** (`/trip-planner`)

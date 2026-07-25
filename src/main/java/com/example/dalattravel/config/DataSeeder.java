@@ -24,8 +24,33 @@ public class DataSeeder {
             HotelRepository hotelRepository,
             RestaurantRepository restaurantRepository,
             BlogPostRepository blogPostRepository,
-            ReviewRepository reviewRepository) {
+            ReviewRepository reviewRepository,
+            UserRepository userRepository,
+            com.example.dalattravel.service.AuthService authService) {
         return args -> {
+            // Seed Admin and User accounts if missing
+            if (!userRepository.existsByUsername("admin")) {
+                userRepository.save(com.example.dalattravel.model.User.builder()
+                        .username("admin")
+                        .email("admin@dalattravel.vn")
+                        .password(authService.hashPassword("admin123"))
+                        .fullName("Quản Trị Viên Hệ Thống")
+                        .phoneNumber("0900000000")
+                        .role("ADMIN")
+                        .build());
+            }
+
+            if (!userRepository.existsByUsername("user")) {
+                userRepository.save(com.example.dalattravel.model.User.builder()
+                        .username("user")
+                        .email("user@gmail.com")
+                        .password(authService.hashPassword("user123"))
+                        .fullName("Nguyễn Văn A")
+                        .phoneNumber("0901234567")
+                        .role("USER")
+                        .build());
+            }
+
             // Re-seed when data is incomplete or missing image URLs
             if (categoryRepository.count() < 3 || touristPlaceRepository.count() < 25 || hotelRepository.findAll().stream().anyMatch(h -> h.getImageUrl() == null)) {
 

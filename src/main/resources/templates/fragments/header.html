@@ -135,6 +135,31 @@
                     </a>
                 </li>
             </ul>
+
+            <!-- Auth status & Admin buttons -->
+            <div class="d-flex align-items-center ms-3 ps-3 border-start border-light border-opacity-25">
+                <div th:if="${session.loggedInUser != null}" class="d-flex align-items-center gap-2">
+                    <span class="text-white small me-1">
+                        <i class="fa-solid fa-user-circle text-warning me-1 fs-6"></i>
+                        <span th:text="${session.loggedInUser.fullName}">User</span>
+                    </span>
+                    <a th:if="${session.loggedInUser.role == 'ADMIN'}" href="/admin" class="btn btn-sm btn-outline-warning text-white fw-bold rounded-pill px-3">
+                        <i class="fa-solid fa-shield-halved me-1"></i> Admin
+                    </a>
+                    <a href="/logout" class="btn btn-sm btn-danger fw-bold rounded-pill px-3">
+                        <i class="fa-solid fa-right-from-bracket me-1"></i> Thoát
+                    </a>
+                </div>
+                <div th:if="${session.loggedInUser == null}" class="d-flex align-items-center gap-2">
+                    <a href="/login" class="btn btn-sm btn-outline-light fw-bold rounded-pill px-3">
+                        <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập
+                    </a>
+                    <a href="/register" class="btn btn-sm btn-warning text-dark fw-bold rounded-pill px-3">
+                        <i class="fa-solid fa-user-plus me-1"></i> Đăng ký
+                    </a>
+                </div>
+            </div>
+
         </div>
     </div>
 </nav>

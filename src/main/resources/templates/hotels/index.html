@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/header :: head('Danh Sách Khách Sạn Đà Lạt')}">
+<head th:replace="~{fragments/header :: head('Danh Sách Khách Sạn & Đặt Phòng')}">
 </head>
 <body>
 
@@ -12,6 +12,17 @@
     <div class="container text-center">
         <h2 class="fw-bold mb-1"><i class="fa-solid fa-hotel me-2"></i>Danh Sách Khách Sạn & Resort Đà Lạt</h2>
         <p class="mb-0 opacity-90">Từ homestay ấm cúng, khách sạn trung tâm đến resort nghỉ dưỡng 5 sao cao cấp</p>
+    </div>
+</div>
+
+<!-- Alert Success Booking -->
+<div class="container" th:if="${bookingSuccess}">
+    <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-4 p-4 border-0 mb-4" role="alert">
+        <h4 class="fw-bold alert-heading mb-2"><i class="fa-solid fa-circle-check me-2 text-success"></i>ĐẶT PHÒNG THÀNH CÔNG!</h4>
+        <p class="mb-1 fs-5">Mã đơn đặt phòng của bạn: <span class="badge bg-danger fs-5 ms-1" th:text="${bookingCode}">DLBK-12345</span></p>
+        <p class="mb-1">Khách sạn: <strong th:text="${hotelName}">Tên khách sạn</strong></p>
+        <p class="mb-0">Tổng chi phí dự kiến: <strong class="text-success" th:text="${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</strong></p>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 </div>
 
@@ -29,10 +40,76 @@
                     <p class="text-muted small mb-3"><i class="fa-solid fa-phone text-success me-1"></i><span th:text="${hotel.phone}">SĐT</span></p>
                     <div class="pt-3 border-top d-flex justify-content-between align-items-center mt-auto">
                         <span class="fw-bold text-success fs-6" th:text="${#numbers.formatDecimal(hotel.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ / đêm'">Giá</span>
-                        <a href="/hotels" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold">Đặt phòng</a>
+                        <button type="button" class="btn btn-sm btn-primary rounded-pill px-3 fw-bold"
+                                data-bs-toggle="modal"
+                                th:data-bs-target="'#bookingModal-' + ${hotel.id}">
+                            <i class="fa-solid fa-calendar-check me-1"></i> Đặt phòng
+                        </button>
                     </div>
                 </div>
             </div>
+
+            <!-- Booking Modal for Hotel -->
+            <div class="modal fade" th:id="'bookingModal-' + ${hotel.id}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 rounded-4 shadow-lg">
+                        <div class="modal-header bg-primary text-white rounded-top-4 p-3">
+                            <h5 class="modal-title fw-bold"><i class="fa-solid fa-hotel me-2"></i>Đặt Phòng: <span th:text="${hotel.name}">Tên khách sạn</span></h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form th:action="@{/hotels/book}" method="post">
+                            <div class="modal-body p-4">
+                                <input type="hidden" name="hotelId" th:value="${hotel.id}">
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Họ và tên khách hàng:</label>
+                                    <input type="text" name="customerName" class="form-control"
+                                           th:value="${session.loggedInUser != null ? session.loggedInUser.fullName : ''}" placeholder="Nguyễn Văn A" required>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Số điện thoại:</label>
+                                        <input type="text" name="phoneNumber" class="form-control"
+                                               th:value="${session.loggedInUser != null ? session.loggedInUser.phoneNumber : ''}" placeholder="0901234567" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Email:</label>
+                                        <input type="email" name="email" class="form-control"
+                                               th:value="${session.loggedInUser != null ? session.loggedInUser.email : ''}" placeholder="nguyenvana@gmail.com" required>
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Ngày nhận phòng (Check-in):</label>
+                                        <input type="date" name="checkInDate" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-bold">Ngày trả phòng (Check-out):</label>
+                                        <input type="date" name="checkOutDate" class="form-control" required>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Số lượng khách:</label>
+                                    <input type="number" name="numberOfGuests" class="form-control" min="1" max="10" value="2" required>
+                                </div>
+
+                                <div class="p-3 bg-light rounded-3 text-secondary small">
+                                    <p class="mb-1"><i class="fa-solid fa-circle-info text-primary me-1"></i> Giá niêm yết: <strong class="text-success" th:text="${#numbers.formatDecimal(hotel.pricePerNight, 0, 'COMMA', 0, 'POINT')} + ' VNĐ / đêm'">0 VNĐ</strong></p>
+                                    <p class="mb-0">Hệ thống sẽ tự động tính tổng tiền theo số đêm lưu trú thực tế.</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light rounded-bottom-4 p-3">
+                                <button type="button" class="btn btn-secondary rounded-pill fw-bold" data-bs-dismiss="modal">Hủy bỏ</button>
+                                <button type="submit" class="btn btn-primary rounded-pill fw-bold px-4 shadow">Xác nhận đặt phòng</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -42,5 +119,17 @@
 <footer th:replace="~{fragments/header :: footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Default checkin and checkout dates
+    document.addEventListener("DOMContentLoaded", function() {
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 2);
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+        document.querySelectorAll('input[name="checkInDate"]').forEach(el => el.value = formatDate(today));
+        document.querySelectorAll('input[name="checkOutDate"]').forEach(el => el.value = formatDate(tomorrow));
+    });
+</script>
 </body>
 </html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Bảng Điều Khiển Admin')}">
+</head>
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/header :: navbar('')}"></nav>
+
+<div class="container py-4 mb-5">
+
+    <!-- Header bar -->
+    <div class="d-flex justify-content-between align-items-center bg-dark text-white p-4 rounded-4 shadow-sm mb-4">
+        <div>
+            <h3 class="fw-extrabold mb-1"><i class="fa-solid fa-shield-halved text-warning me-2"></i>Trang Quản Trị Hệ Thống DaLatTravel</h3>
+            <p class="mb-0 text-white-50">Chào mừng Admin <strong class="text-warning" th:text="${session.loggedInUser.fullName}">Admin</strong>! Quản lý thông tin và dịch vụ du lịch Đà Lạt.</p>
+        </div>
+        <a href="/" class="btn btn-outline-light rounded-pill px-4 fw-bold"><i class="fa-solid fa-globe me-1"></i> Xem trang khách</a>
+    </div>
+
+    <!-- Alert success -->
+    <div th:if="${successMessage}" class="alert alert-success fw-bold rounded-3 mb-4" th:text="${successMessage}"></div>
+
+    <!-- Admin Navigation Tabs -->
+    <ul class="nav nav-pills gap-2 mb-4 bg-white p-2 rounded-4 shadow-sm border">
+        <li class="nav-item"><a class="nav-link active fw-bold rounded-3" href="/admin"><i class="fa-solid fa-chart-pie me-1"></i> Tổng quan</a></li>
+        <li class="nav-item"><a class="nav-link fw-bold text-dark rounded-3" href="/admin/hotels"><i class="fa-solid fa-hotel me-1"></i> Khách sạn</a></li>
+        <li class="nav-item"><a class="nav-link fw-bold text-dark rounded-3" href="/admin/tourist-places"><i class="fa-solid fa-mountain me-1"></i> Địa điểm du lịch</a></li>
+        <li class="nav-item"><a class="nav-link fw-bold text-dark rounded-3" href="/admin/restaurants"><i class="fa-solid fa-utensils me-1"></i> Nhà hàng</a></li>
+        <li class="nav-item"><a class="nav-link fw-bold text-dark rounded-3" href="/admin/bookings"><i class="fa-solid fa-calendar-check me-1"></i> Đặt phòng</a></li>
+        <li class="nav-item"><a class="nav-link fw-bold text-dark rounded-3" href="/admin/users"><i class="fa-solid fa-users me-1"></i> Người dùng</a></li>
+    </ul>
+
+    <!-- Metrics Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card card-custom p-4 bg-primary text-white text-center">
+                <i class="fa-solid fa-hotel fs-1 opacity-75 mb-2"></i>
+                <h3 class="fw-bold display-6 mb-0" th:text="${totalHotels}">0</h3>
+                <p class="mb-0 text-white-50 fw-semibold">Khách sạn & Resort</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom p-4 bg-success text-white text-center">
+                <i class="fa-solid fa-mountain fs-1 opacity-75 mb-2"></i>
+                <h3 class="fw-bold display-6 mb-0" th:text="${totalPlaces}">0</h3>
+                <p class="mb-0 text-white-50 fw-semibold">Địa điểm du lịch</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom p-4 bg-warning text-dark text-center">
+                <i class="fa-solid fa-utensils fs-1 opacity-75 mb-2"></i>
+                <h3 class="fw-bold display-6 mb-0" th:text="${totalRestaurants}">0</h3>
+                <p class="mb-0 text-dark-50 fw-semibold">Nhà hàng & Quán ăn</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card card-custom p-4 bg-danger text-white text-center">
+                <i class="fa-solid fa-calendar-check fs-1 opacity-75 mb-2"></i>
+                <h3 class="fw-bold display-6 mb-0" th:text="${totalBookings}">0</h3>
+                <p class="mb-0 text-white-50 fw-semibold">Đơn đặt phòng</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bookings Section -->
+    <div class="card card-custom p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0 text-dark"><i class="fa-solid fa-clock-rotate-left text-danger me-2"></i>Đơn Đặt Phòng Mới Nhất</h4>
+            <a href="/admin/bookings" class="btn btn-sm btn-outline-danger fw-bold rounded-pill">Quản lý tất cả &rarr;</a>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Mã đơn</th>
+                        <th>Khách hàng</th>
+                        <th>Số điện thoại</th>
+                        <th>Ngày check-in</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="b : ${recentBookings}">
+                        <td><span class="badge bg-dark fw-bold" th:text="${b.bookingCode}">CODE</span></td>
+                        <td class="fw-bold" th:text="${b.customerName}">Tên</td>
+                        <td th:text="${b.phoneNumber}">SĐT</td>
+                        <td th:text="${b.checkInDate}">Ngày</td>
+                        <td class="fw-bold text-success" th:text="${#numbers.formatDecimal(b.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">Giá</td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${b.status == 'CONFIRMED'} ? 'bg-success' : (${b.status == 'CANCELLED'} ? 'bg-danger' : 'bg-warning text-dark')"
+                                  th:text="${b.status}">Trạng thái</span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(recentBookings)}">
+                        <td colspan="6" class="text-center text-muted py-4">Chưa có đơn đặt phòng nào gần đây.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/header :: footer}"></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
