@@ -1,0 +1,36 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "Xác nhận email";
+}
+
+<div class="text-white">
+    <h2 class="text-success">@ViewData["Title"]</h2>
+
+    <p>
+        Cảm ơn bạn đã đăng ký tài khoản tại <strong>VN TRAVEL</strong>. <br />
+        Một email xác nhận đã được gửi đến địa chỉ <strong>@Model.Email</strong> <br />
+        Vui lòng kiểm tra hộp thư đến hoặc thư rác và nhấn vào liên kết xác nhận.
+    </p>
+
+</div>
+
+<script>
+    const email = "@Model.Email";
+
+    const checkEmailConfirmed = async () => {
+        try {
+            const res = await fetch(`/api/email-confirmed?email=${encodeURIComponent(email)}`);
+            if (!res.ok) return;
+
+            const data = await res.json();
+            if (data.confirmed) {
+                window.location.href = "/Identity/Account/Login";
+            }
+        } catch (e) {
+            console.error("Lỗi khi kiểm tra xác nhận email:", e);
+        }
+    };
+
+    setInterval(checkEmailConfirmed, 5000);
+</script>

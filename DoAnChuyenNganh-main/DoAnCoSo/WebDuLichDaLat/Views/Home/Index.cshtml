@@ -1,0 +1,586 @@
+@model List<WebDuLichDaLat.Models.TouristPlace>
+
+@{
+    ViewData["Title"] = "Trang chủ - Du lịch Đà Lạt";
+
+    ViewBag.HeroTitle = ViewBag.HeroTitle ?? "Đà Lạt";
+
+    ViewBag.HeroTagline = ViewBag.HeroTagline ?? "Pixel perfect design with awesome contents";
+
+    ViewBag.HeroButtonText = ViewBag.HeroButtonText ?? "KHÁM PHÁ NGAY";
+
+    ViewBag.HeroButtonLink = ViewBag.HeroButtonLink ?? Url.Action("Index", "TripPlanner");
+
+}
+
+
+
+<!-- HERO: nếu bạn vẫn muốn dùng partial, giữ partial; mình thêm fallback markup đẹp -->
+
+@* Nếu bạn có partial _HeroSection, tiếp tục dùng nó. Nếu muốn bản inline, mình ghi sẵn bên dưới (đã comment). *@
+
+@await Html.PartialAsync("_HeroSection")
+
+
+
+@* ---------- CONTENT BLOCKS (Festival | Featured Place | Latest Blog) ---------- *@
+
+<section class="content-blocks-section py-5" style="background-color:#0f0f10; color: #fff;">
+
+    <div class="container-fluid px-4">
+
+        <div class="row g-4">
+
+            <!-- Block 1: Festival -->
+
+            <div class="col-lg-4">
+
+                @{
+
+                    var upcomingFestival = ViewBag.UpcomingFestival as WebDuLichDaLat.Models.Festival;
+
+                }
+
+                <article class="card content-card h-100" role="article" aria-labelledby="festival-title">
+
+                    <a class="card-link" href="@(upcomingFestival != null ? Url.Action("Detail", "Festival", new { id = upcomingFestival.Id }) : Url.Action("Index", "Festival"))" aria-label="Lễ hội và sự kiện">
+
+                        <div class="card-media">
+
+                            @if (upcomingFestival != null && !string.IsNullOrEmpty(upcomingFestival.ImageUrl))
+
+                            {
+
+                                <picture class="media-picture">
+
+                                    <img class="media-img lazy" data-src="@upcomingFestival.ImageUrl" alt="@upcomingFestival.Title" loading="lazy" />
+
+                                </picture>
+
+                            }
+
+                            else
+
+                            {
+
+                                <div class="media-fallback">
+
+                                    <i class="bi bi-calendar-event" aria-hidden="true"></i>
+
+                                </div>
+
+                            }
+
+                        </div>
+
+                    </a>
+
+                    <div class="card-body p-4 bg-white text-dark">
+
+                        <small class="text-muted">Lễ hội &amp; Sự kiện</small>
+
+                        <h3 id="festival-title" class="mt-2 mb-2" style="font-size:1.6rem;">@(upcomingFestival?.Title ?? "Lễ hội Đà Lạt")</h3>
+
+                        @if (upcomingFestival != null)
+
+                        {
+
+                            <p class="meta mb-2"><i class="bi bi-calendar3 me-1"></i>
+
+                                @upcomingFestival.StartDate.ToString("dd/MM/yyyy")
+
+                                @if (upcomingFestival.EndDate.HasValue && upcomingFestival.EndDate.Value.Date != upcomingFestival.StartDate.Date)
+
+                                {
+
+                                    <text> - @upcomingFestival.EndDate.Value.ToString("dd/MM/yyyy")</text>
+
+                                }
+
+                            </p>
+
+                            @if (!string.IsNullOrEmpty(upcomingFestival.Location))
+
+                            {
+
+                                <p class="meta mb-3"><i class="bi bi-geo-alt me-1"></i>@upcomingFestival.Location</p>
+
+                            }
+
+                            <p class="excerpt mb-3">@((upcomingFestival.Description ?? "Khám phá các lễ hội và sự kiện đặc sắc tại Đà Lạt").Length > 150 ? (upcomingFestival.Description.Substring(0, 150) + "...") : upcomingFestival.Description)</p>
+
+                        }
+
+                        else
+
+                        {
+
+                            <p class="excerpt mb-3">Khám phá các lễ hội và sự kiện văn hóa đặc sắc tại Đà Lạt.</p>
+
+                        }
+
+                        <a class="btn btn-pill" href="@(upcomingFestival != null ? Url.Action("Detail", "Festival", new { id = upcomingFestival.Id }) : Url.Action("Index", "Festival"))">Xem chi tiết</a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+
+            <!-- Block 2: Featured Place -->
+
+            <div class="col-lg-4">
+
+                @{
+
+                    var featuredPlace = ViewBag.FeaturedPlace as WebDuLichDaLat.Models.TouristPlace;
+
+                }
+
+                <article class="card content-card h-100" role="article" aria-labelledby="featured-title">
+
+                    <a class="card-link" href="@(featuredPlace != null ? Url.Action("Display", "TouristPlace", new { id = featuredPlace.Id }) : Url.Action("Index", "TouristPlace"))" aria-label="Địa điểm nổi bật">
+
+                        <div class="card-media">
+
+                            <picture class="media-picture">
+
+                                <img class="media-img lazy" data-src="@(featuredPlace?.ImageUrl ?? "/Images/default-place.jpg")" alt="@(featuredPlace?.Name ?? "Địa điểm nổi bật")" loading="lazy" />
+
+                            </picture>
+
+                        </div>
+
+                    </a>
+
+                    <div class="card-body p-4 bg-white text-dark">
+
+                        <small class="text-muted">Địa điểm nổi bật</small>
+
+                        <h3 id="featured-title" class="mt-2 mb-2">@((featuredPlace?.Name) ?? "Địa điểm nổi bật")</h3>
+
+                        <p class="excerpt mb-3">@((featuredPlace?.Description ?? "Khám phá địa điểm tuyệt vời này tại Đà Lạt").Length > 150 ? featuredPlace.Description.Substring(0, 150) + "..." : featuredPlace?.Description)</p>
+
+                        <a class="btn btn-pill" href="@(featuredPlace != null ? Url.Action("Display", "TouristPlace", new { id = featuredPlace.Id }) : Url.Action("Index", "TouristPlace"))">Xem ngay</a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+
+            <!-- Block 3: Latest Blog -->
+
+            <div class="col-lg-4">
+
+                @{
+
+                    var latestBlogPost = ViewBag.LatestBlogPost as WebDuLichDaLat.Models.BlogPost;
+
+                }
+
+                <article class="card content-card h-100" role="article" aria-labelledby="blog-title">
+
+                    <a class="card-link" href="@(latestBlogPost != null ? Url.Action("Detail", "Blog", new { id = latestBlogPost.Id }) : Url.Action("Index", "Blog"))" aria-label="Bài viết mới nhất">
+
+                        <div class="card-media">
+
+                            <picture class="media-picture">
+
+                                <img class="media-img lazy" data-src="@(latestBlogPost?.ImageUrl ?? "/Images/default-place.jpg")" alt="@(latestBlogPost?.Title ?? "Bài viết mới")" loading="lazy" />
+
+                            </picture>
+
+                        </div>
+
+                    </a>
+
+                    <div class="card-body p-4 bg-white text-dark">
+
+                        <small class="text-muted">Tin tức mới nhất</small>
+
+                        <h3 id="blog-title" class="mt-2 mb-2">@((latestBlogPost?.Title) ?? "Bài viết mới")</h3>
+
+                        <p class="excerpt mb-3">@((latestBlogPost?.Content ?? "Đọc bài viết mới nhất về du lịch Đà Lạt").Length > 150 ? latestBlogPost.Content.Substring(0, 150) + "..." : latestBlogPost?.Content)</p>
+
+                        <a class="btn btn-pill" href="@(latestBlogPost != null ? Url.Action("Detail", "Blog", new { id = latestBlogPost.Id }) : Url.Action("Index", "Blog"))">Đọc thêm</a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+@* ---------- TOP DESTINATIONS CAROUSEL ---------- *@
+
+<section class="top-destinations-section py-5" style="background: linear-gradient(180deg,#000,#0a0a0a); color: #fff;">
+
+    <div class="container-fluid px-4">
+
+        <div class="row align-items-center mb-4">
+
+            <div class="col-md-6">
+
+                <h2 class="display-4 fw-bold mb-0">Điểm đến hàng đầu</h2>
+
+                <p class="lead text-muted">Những địa điểm được yêu thích nhất tại Đà Lạt</p>
+
+            </div>
+
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+
+                <a class="text-danger text-decoration-none fw-semibold" href="@Url.Action("Index", "TouristPlace")">Tìm hiểu thêm <i class="bi bi-arrow-right"></i></a>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="position-relative">
+
+            <button id="carouselPrev" class="carousel-nav-btn" aria-label="Previous destinations"><i class="bi bi-chevron-left"></i></button>
+
+            <button id="carouselNext" class="carousel-nav-btn" aria-label="Next destinations"><i class="bi bi-chevron-right"></i></button>
+
+
+
+            <div id="destinationsCarousel" class="destinations-carousel" tabindex="0" role="list">
+
+                @if (Model != null && Model.Any())
+
+                {
+
+                    foreach (var place in Model)
+
+                    {
+
+                        <div class="destination-card" role="listitem">
+
+                            <a class="destination-link" href="@Url.Action("Display", "TouristPlace", new { id = place.Id })" aria-label="@place.Name">
+
+                                <div class="destination-media">
+
+                                    <picture>
+
+                                        <source media="(min-width: 1200px)" data-srcset="@(place.ImageUrl)">
+
+                                        <img class="destination-img lazy" data-src="@(place.ImageUrl ?? "/Images/default-place.jpg")" alt="@place.Name" loading="lazy"/>
+
+                                    </picture>
+
+                                    <div class="destination-overlay">
+
+                                        <h3 class="destination-title">@place.Name</h3>
+
+                                        @if (place.Region != null && !string.IsNullOrEmpty(place.Region.Name))
+
+                                        {
+
+                                            <p class="destination-sub">@place.Region.Name</p>
+
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            </a>
+
+                        </div>
+
+                    }
+
+                }
+
+                else
+
+                {
+
+                    @for (int i = 0; i < 4; i++)
+
+                    {
+
+                        <div class="destination-card placeholder" role="listitem" aria-hidden="true">
+
+                            <div class="destination-media skeleton"></div>
+
+                        </div>
+
+                    }
+
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+@* ---------- STYLES: Tinh chỉnh để đẹp, dễ tuỳ chỉnh ---------- *@
+
+<style>
+
+    :root{
+
+        --accent: #ff6b9d;
+
+        --card-radius: 14px;
+
+        --glass: rgba(255,255,255,0.06);
+
+    }
+
+
+
+    /* Cards */
+
+    .content-card {
+
+        border-radius: var(--card-radius);
+
+        overflow: hidden;
+
+        box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+
+        background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+
+        transition: transform .28s ease, box-shadow .28s ease;
+
+    }
+
+    .content-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(0,0,0,0.6); }
+
+
+
+    .card-media { height: 300px; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg,#1f2937,#111827); position:relative; overflow:hidden; }
+
+    .media-picture, .media-fallback { width:100%; height:100%; display:block; }
+
+    .media-img, .destination-img { width:100%; height:100%; object-fit:cover; transform-origin:center; transition: transform .5s ease, opacity .35s ease; display:block; opacity:0; }
+
+    .media-img.loaded, .destination-img.loaded { opacity:1; }
+
+    .media-fallback { display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.7); font-size:64px; }
+
+
+
+    .card-body { border-top-left-radius:0; border-top-right-radius:0; }
+
+
+
+    .btn-pill { background: var(--accent); color: #fff; border-radius: 999px; padding:10px 28px; text-decoration:none; display:inline-block; border:none; font-weight:600; }
+
+
+
+    .excerpt { color:#444; }
+
+
+
+    /* Destinations Carousel */
+
+    .destinations-carousel { display:flex; gap:22px; overflow-x:auto; padding:18px 28px; scroll-behavior:smooth; -webkit-overflow-scrolling:touch; }
+
+    .destinations-carousel:focus{ outline: 2px dashed rgba(255,255,255,0.08); outline-offset:6px; }
+
+
+
+    .destination-card { flex:0 0 360px; border-radius:12px; overflow:hidden; background:var(--glass); cursor:pointer; transition: transform .28s ease; }
+
+    .destination-card:hover { transform: translateY(-8px); }
+
+    .destination-media { position:relative; height:420px; overflow:hidden; }
+
+    .destination-overlay { position:absolute; left:0; right:0; bottom:0; padding:18px; background: linear-gradient(180deg, transparent, rgba(0,0,0,0.65)); color:#fff; }
+
+    .destination-title { font-size:1.4rem; margin:0; font-weight:700; text-shadow: 0 4px 14px rgba(0,0,0,0.6); }
+
+    .destination-sub { margin:0; font-size:.9rem; opacity:0.85; }
+
+
+
+    /* Carousel nav */
+
+    .carousel-nav-btn { position:absolute; top:50%; transform:translateY(-50%); z-index:20; width:52px; height:52px; border-radius:50%; border:none; background: rgba(255,255,255,0.06); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; transition: all .22s ease; }
+
+    #carouselPrev{ left:-10px; }
+
+    #carouselNext{ right:-10px; }
+
+    .carousel-nav-btn:hover{ transform: translateY(-50%) scale(1.06); background: rgba(255,255,255,0.12); }
+
+
+
+    /* Skeleton placeholders */
+
+    .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.03)); min-height: 420px; }
+
+
+
+    /* Responsive */
+
+    @@media (max-width: 992px){
+
+        .destination-card { flex:0 0 300px; }
+
+        .media-img { height:100%; }
+
+    }
+
+    @@media (max-width: 576px){
+
+        .destinations-carousel { padding:16px 12px; gap:14px; }
+
+        .destination-card { flex:0 0 250px; }
+
+        .card-media { height:220px; }
+
+    }
+
+</style>
+
+
+
+@* ---------- JAVASCRIPT: lazy-load, image loaded skeleton, carousel auto-play, keyboard nav ---------- *@
+
+<script>
+
+    (function(){
+
+        // Lazy load with IntersectionObserver
+
+        const lazyImages = document.querySelectorAll('img.lazy');
+
+        if ('IntersectionObserver' in window) {
+
+            const imgObserver = new IntersectionObserver((entries, obs) => {
+
+                entries.forEach(entry => {
+
+                    if(entry.isIntersecting){
+
+                        const img = entry.target;
+
+                        const src = img.dataset.src || img.getAttribute('data-srcset');
+
+                        if(src){ img.src = src; }
+
+                        img.addEventListener('load', () => img.classList.add('loaded'));
+
+                        imgObserver.unobserve(img);
+
+                    }
+
+                });
+
+            }, { rootMargin: "100px" });
+
+            lazyImages.forEach(img => imgObserver.observe(img));
+
+        } else {
+
+            // fallback: load all
+
+            lazyImages.forEach(img => {
+
+                const src = img.dataset.src;
+
+                if(src) img.src = src;
+
+                img.addEventListener('load', () => img.classList.add('loaded'));
+
+            });
+
+        }
+
+
+
+        // Destinations carousel logic: arrows, auto-play, pause on hover, keyboard
+
+        const carousel = document.getElementById('destinationsCarousel');
+
+        const prevBtn = document.getElementById('carouselPrev');
+
+        const nextBtn = document.getElementById('carouselNext');
+
+        const scrollAmount = 380; // card width + gap (adjust if you change CSS)
+
+
+
+        function scrollByDir(dir) {
+
+            carousel.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+
+        }
+
+
+
+        prevBtn && prevBtn.addEventListener('click', () => scrollByDir(-1));
+
+        nextBtn && nextBtn.addEventListener('click', () => scrollByDir(1));
+
+
+
+        // Auto-play
+
+        let autoplayInterval = 4000;
+
+        let autoTimer = setInterval(() => scrollByDir(1), autoplayInterval);
+
+
+
+        // Pause on hover/focus
+
+        [carousel, prevBtn, nextBtn].forEach(el => {
+
+            if(!el) return;
+
+            el.addEventListener('mouseenter', () => clearInterval(autoTimer));
+
+            el.addEventListener('mouseleave', () => { autoTimer = setInterval(() => scrollByDir(1), autoplayInterval); });
+
+            el.addEventListener('focusin', () => clearInterval(autoTimer));
+
+            el.addEventListener('focusout', () => { autoTimer = setInterval(() => scrollByDir(1), autoplayInterval); });
+
+        });
+
+
+
+        // Keyboard navigation (left/right)
+
+        carousel && carousel.addEventListener('keydown', (e) => {
+
+            if(e.key === 'ArrowLeft') { scrollByDir(-1); e.preventDefault(); }
+
+            if(e.key === 'ArrowRight') { scrollByDir(1); e.preventDefault(); }
+
+        });
+
+
+
+        // Improve accessibility: show role/labels
+
+        if(carousel) carousel.setAttribute('aria-live','polite');
+
+
+
+    })();
+
+</script>

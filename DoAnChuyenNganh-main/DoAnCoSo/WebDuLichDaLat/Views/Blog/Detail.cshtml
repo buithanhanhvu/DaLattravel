@@ -1,0 +1,39 @@
+﻿@model WebDuLichDaLat.Models.BlogPost
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<style>
+    .preserve-line-breaks {
+        white-space: pre-line;
+    }
+
+    .article-box {
+        background-color: #1e1e1e;
+        padding: 30px;
+        border-radius: 10px;
+        border: 1px solid #444;
+        box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+</style>
+
+<section class="py-5 text-white" style="background-color: #111;">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h1 class="mb-3 fw-bold">@Model.Title</h1>
+            <p class="text-muted">@Model.PostedDate.ToString("dd/MM/yyyy")</p>
+
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <img src="@Url.Content($"~/images/{Model.ImageUrl}")"
+                     class="img-fluid mb-4 rounded shadow"
+                     alt="@Model.Title"
+                     style="max-height: 500px;" />
+            }
+        </div>
+
+        <div class="article-box preserve-line-breaks lead">
+            @Model.Content
+        </div>
+    </div>
+</section>

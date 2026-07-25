@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đà Lạt Travel - Lên Lịch Trình & Ghép Xe Đi Chung</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .hero-banner {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+            height: 450px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            border: none;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #0e8379, #2edb6e);
+            color: white;
+        }
+        .btn-carpool {
+            background: linear-gradient(135deg, #ff4b1f, #ff9068);
+            color: white;
+            border: none;
+            font-weight: 600;
+        }
+        .btn-carpool:hover {
+            background: linear-gradient(135deg, #e03e15, #f57f53);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-success fs-3" href="/">🌲 DaLatTravel</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto fs-6">
+                <li class="nav-item"><a class="nav-link active" href="/"><i class="fa-solid fa-house"></i> Trang chủ</a></li>
+                <li class="nav-item"><a class="nav-link" href="/trip-planner"><i class="fa-solid fa-route"></i> Lên lịch trình</a></li>
+                <li class="nav-item"><a class="nav-link" href="/carpool"><i class="fa-solid fa-car-side"></i> Ghép xe đi chung</a></li>
+                <li class="nav-item"><a class="nav-link" href="/tourist-places"><i class="fa-solid fa-mountain-sun"></i> Địa điểm</a></li>
+                <li class="nav-item"><a class="nav-link" href="/hotels"><i class="fa-solid fa-hotel"></i> Khách sạn</a></li>
+                <li class="nav-item"><a class="nav-link" href="/restaurants"><i class="fa-solid fa-utensils"></i> Nhà hàng</a></li>
+                <li class="nav-item"><a class="nav-link" href="/blog"><i class="fa-solid fa-blog"></i> Bài viết</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact"><i class="fa-solid fa-envelope"></i> Liên hệ</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="hero-banner">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Khám Phá Thành Phố Ngàn Hoa Đà Lạt</h1>
+        <p class="lead mb-4">Hệ thống gợi ý lịch trình du lịch thông minh và kết nối ghép xe đi chung tối ưu chi phí.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="/trip-planner" class="btn btn-gradient btn-lg px-4 shadow"><i class="fa-solid fa-wand-magic-sparkles"></i> Lên Lịch Trình Tự Động</a>
+            <a href="/carpool" class="btn btn-carpool btn-lg px-4 shadow"><i class="fa-solid fa-taxi"></i> Ghép Xe Đi Chung</a>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <h2 class="text-center fw-bold mb-4">Tính Năng Nổi Bật</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 p-4 shadow-sm feature-card text-center">
+                <div class="fs-1 text-success mb-3"><i class="fa-solid fa-brain"></i></div>
+                <h4 class="fw-bold">Lập Lịch Trình Thông Minh</h4>
+                <p class="text-muted">Ứng dụng thuật toán K-Means Clustering giúp tối ưu lộ trình tham quan theo khu vực địa lý và ngân sách của bạn.</p>
+                <a href="/trip-planner" class="btn btn-outline-success mt-auto">Trải nghiệm ngay &rarr;</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 p-4 shadow-sm feature-card text-center">
+                <div class="fs-1 text-danger mb-3"><i class="fa-solid fa-car-side"></i></div>
+                <h4 class="fw-bold">Ghép Xe Tối Ưu Chi Phí</h4>
+                <p class="text-muted">Thuật toán Min-Cost Max-Flow & PDPTW kết nối xe và hành khách cùng tuyến đường, tiết kiệm chi phí tối đa.</p>
+                <a href="/carpool" class="btn btn-outline-danger mt-auto">Đăng ký ghép xe &rarr;</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 p-4 shadow-sm feature-card text-center">
+                <div class="fs-1 text-primary mb-3"><i class="fa-solid fa-map-location-dot"></i></div>
+                <h4 class="fw-bold">Bản Đồ Lộ Trình OSRM</h4>
+                <p class="text-muted">Tích hợp dịch vụ OSRM hiển thị polyline tuyến đường chính xác, tính toán khoảng cách và thời gian thực tế.</p>
+                <a href="/tourist-places" class="btn btn-outline-primary mt-auto">Xem địa điểm &rarr;</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h3 class="fw-bold mb-3"><i class="fa-solid fa-location-dot text-danger"></i> Địa Điểm Du Lịch Nổi Bật</h3>
+        <div class="row g-3">
+            <div class="col-md-4" th:each="place : ${touristPlaces}">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-success" th:text="${place.name}">Tên địa điểm</h5>
+                        <p class="card-text text-muted" th:text="${place.description}">Mô tả</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-dark"><i class="fa-solid fa-star"></i> <span th:text="${place.rating}">5</span> / 5</span>
+                            <small class="text-muted" th:text="${place.id}">ID</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-light py-4 mt-5 text-center">
+    <div class="container">
+        <p class="mb-1">&copy; 2026 Đà Lạt Travel System - Spring Boot Porting Complete.</p>
+        <small class="text-secondary">Dự án Lên lịch trình du lịch Đà Lạt & Ghép xe đi chung.</small>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

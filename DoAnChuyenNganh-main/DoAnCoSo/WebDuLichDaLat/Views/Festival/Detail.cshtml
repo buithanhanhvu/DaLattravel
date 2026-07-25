@@ -1,0 +1,202 @@
+@model WebDuLichDaLat.Models.Festival
+@{
+    Layout = "~/Views/Shared/_LayoutNoFooter.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+<style>
+    .preserve-line-breaks {
+        white-space: pre-line;
+    }
+
+    .festival-detail-box {
+        background-color: #1e1e1e;
+        padding: 30px;
+        border-radius: 10px;
+        border: 1px solid #444;
+        box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    }
+
+    .info-item {
+        display: flex;
+        align-items: start;
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .info-icon {
+        font-size: 24px;
+        color: #ff6b9d;
+        margin-right: 15px;
+        min-width: 30px;
+    }
+
+    .info-content h6 {
+        color: #ff6b9d;
+        font-weight: 600;
+        margin-bottom: 5px;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .info-content p {
+        color: rgba(255,255,255,0.9);
+        margin: 0;
+        font-size: 16px;
+    }
+</style>
+
+<section class="text-white" style="background-color: #111; min-height: 100vh; padding: 100px 0 40px 0;">
+    <div class="container">
+        <!-- Back Button -->
+        <div class="mb-4">
+            <a href="@Url.Action("Index", "Festival")" class="text-decoration-none" style="color: #ff6b9d;">
+                <i class="bi bi-arrow-left me-2"></i> Quay lại danh sách
+            </a>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <h1 class="mb-3 fw-bold" style="font-size: 42px; color: white;">@Model.Title</h1>
+            
+            @if (!string.IsNullOrEmpty(Model.EventType))
+            {
+                <span class="badge mb-3" style="background-color: #ff6b9d; color: white; padding: 10px 20px; font-size: 14px; font-weight: 500;">
+                    @Model.EventType
+                </span>
+            }
+        </div>
+
+        <!-- Image -->
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div class="text-center mb-5">
+                <img src="@Url.Content($"~/Images/{System.IO.Path.GetFileName(Model.ImageUrl)}")"
+                     class="img-fluid rounded shadow-lg"
+                     alt="@Model.Title"
+                     style="max-height: 500px; width: 100%; object-fit: cover;" />
+            </div>
+        }
+
+        <!-- Main Content -->
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <!-- Description -->
+                <div class="festival-detail-box mb-4">
+                    <h3 class="mb-4" style="color: #ff6b9d; font-weight: 700; font-size: 28px;">
+                        <i class="bi bi-info-circle me-2"></i> Giới thiệu
+                    </h3>
+                    <div class="preserve-line-breaks lead" style="color: rgba(255,255,255,0.9); line-height: 1.8;">
+                        @Model.Description
+                    </div>
+                </div>
+
+                <!-- Detailed Content -->
+                @if (!string.IsNullOrEmpty(Model.Content))
+                {
+                    <div class="festival-detail-box mb-4">
+                        <h3 class="mb-4" style="color: #ff6b9d; font-weight: 700; font-size: 28px;">
+                            <i class="bi bi-file-text me-2"></i> Chi tiết
+                        </h3>
+                        <div class="preserve-line-breaks" style="color: rgba(255,255,255,0.9); line-height: 1.8;">
+                            @Model.Content
+                        </div>
+                    </div>
+                }
+
+                <!-- Information Box -->
+                <div class="festival-detail-box">
+                    <h3 class="mb-4" style="color: #ff6b9d; font-weight: 700; font-size: 28px;">
+                        <i class="bi bi-calendar-check me-2"></i> Thông tin sự kiện
+                    </h3>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="bi bi-calendar-event"></i>
+                        </div>
+                        <div class="info-content">
+                            <h6>Thời gian</h6>
+                            <p>
+                                Từ @Model.StartDate.ToString("dd/MM/yyyy")
+                                @if (Model.EndDate.HasValue && Model.EndDate.Value != Model.StartDate)
+                                {
+                                    <text> đến @Model.EndDate.Value.ToString("dd/MM/yyyy")</text>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Time))
+                                {
+                                    <br /><span style="color: rgba(255,255,255,0.7);">@Model.Time</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Location))
+                    {
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Địa điểm</h6>
+                                <p>@Model.Location</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.TicketPrice))
+                    {
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-ticket-perforated"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Giá vé</h6>
+                                <p>@Model.TicketPrice</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.ContactInfo))
+                    {
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-telephone-fill"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Liên hệ</h6>
+                                <p>@Model.ContactInfo</p>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Website))
+                    {
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="bi bi-globe"></i>
+                            </div>
+                            <div class="info-content">
+                                <h6>Website</h6>
+                                <p>
+                                    <a href="@Model.Website" target="_blank" rel="noopener noreferrer" 
+                                       style="color: #ff6b9d; text-decoration: none;">
+                                        @Model.Website <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 12px;"></i>
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
