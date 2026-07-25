@@ -181,7 +181,7 @@ Truyền cấu hình bảo mật thông qua biến môi trường để chống 
 export DB_URL="jdbc:mysql://localhost:3306/dalattravel_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&characterEncoding=UTF-8"
 export DB_USERNAME="root"
 export DB_PASSWORD="your_secure_db_password"
-export GOOGLE_CLIENT_ID="1071806914161-7tjfbvs26pk1n47t89lr14q201djorre.apps.googleusercontent.com"
+export GOOGLE_CLIENT_ID="your_google_client_id.apps.googleusercontent.com"
 ```
 
 ---
@@ -204,14 +204,9 @@ CREATE DATABASE dalattravel_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 .\mvnw.cmd spring-boot:run
 ```
 
-Sau khi server khởi chạy tại `http://localhost:8080`:
+Sau khi ứng dụng khởi chạy tại `http://localhost:8080`, du khách và quản trị viên có thể sử dụng các chức năng trực tiếp trên giao diện hoặc đăng nhập bằng tài khoản Quản trị viên/Tài khoản cá nhân Google Identity.
 
-### 🔑 Tài Khoản Thử Nghiệm Mẫu (Sample Testing Accounts)
-
-| Vai trò (Role) | Tên đăng nhập (Username) | Mật khẩu mẫu (Password) | Phân quyền & Mục đích kiểm thử |
-| :--- | :--- | :--- | :--- |
-| **Quản trị viên (Admin)** | `admin` | `admin123` | Quyền Quản trị viên hệ thống (Admin Dashboard, Duyệt đơn đặt phòng, CRUD Khách sạn/Địa điểm/Nhà hàng, Phân quyền RBAC). |
-| **Khách hàng mẫu (User)** | `user` | `user123` | Quyền Khách hàng (Lên lịch trình tự động, Ghép xe đi chung, Đặt phòng khách sạn, Đăng nhập Google OAuth2). |
+---
 
 ---
 
